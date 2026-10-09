@@ -13,3 +13,7 @@
 img{-webkit-user-drag:none;user-select:none}
 
 #result.confidence-high{border:2px solid #23834b;background:#f2fbf5}#result.confidence-low{border:2px solid #bb4037;background:#fff5f3}#result.confidence-uncertain{border:2px solid #b67b20;background:#fffaf0}.confidence-number{font-size:clamp(44px,7vw,80px);font-weight:800;line-height:1.1;letter-spacing:-2px;margin:16px 0 0}.confidence-high .confidence-number,.confidence-high h2{color:#16703c}.confidence-low .confidence-number,.confidence-low h2{color:#ae3029}.confidence-uncertain .confidence-number,.confidence-uncertain h2{color:#986414}.confidence-label{font-size:15px;font-weight:700;margin:6px 0 20px}.shape-score{font-size:24px;font-weight:700;color:#344a36}
+
+.measurement-status{font-size:26px;font-weight:800;color:#986414}
+
+#measurement.measurement-supported{border:2px solid #23834b;background:#f2fbf5}.measurement-supported .measurement-status{color:#16703c}.measurement-other .measurement-status{color:#ae3029}

@@ -6,9 +6,13 @@
     "start": "node --env-file-if-exists=.env server.mjs",
     "test": "node --test",
     "setup:fonts": "bash scripts/setup-renderer.sh",
-    "prebuild:fonts": "node scripts/prebuild-fonts.mjs"
+    "prebuild:fonts": "node scripts/prebuild-fonts.mjs",
+    "benchmark:local": "node scripts/benchmark-local.mjs"
   },
   "engines": {
     "node": ">=22"
+  },
+  "dependencies": {
+    "tesseract.js": "^7.0.0"
   }
 }

@@ -28,6 +28,14 @@ class MeasurementTests(unittest.TestCase):
   r=self.fixture();r['text']='\x7f';result=run(r);self.assertEqual(result['status'],'not_checked');self.assertIn('Type the words',result['reason'])
  def test_white_text_inside_black_panel(self):
   r=self.fixture();im=Image.open(BytesIO(base64.b64decode(r['image'].split(',')[1]))).convert('RGB');im=ImageOps.invert(im);canvas=Image.new('RGB',(640,140),'white');canvas.paste(im,(20,20));buf=BytesIO();canvas.save(buf,format='PNG');r['image']='data:image/png;base64,'+base64.b64encode(buf.getvalue()).decode();result=run(r);self.assertEqual(result['status'],'measured',result)
+ def test_repeated_native_word_boxes_are_not_individual_letters(self):
+  r=self.fixture();r['ocr']={'lines':[{'text':'Hamburg','confidence':1,'glyphs':[{'character':c,'x':0,'y':0,'width':1,'height':1} for c in 'Hamburg']}]};result=run(r);self.assertEqual(result['status'],'measured',result);self.assertGreater(result['best']['shapeSimilarity'],90);self.assertIn('OCR positions',result['segmentation'])
+ def test_pixel_ocr_character_boxes(self):
+  r=self.fixture();from PIL import ImageOps
+  im=Image.open(BytesIO(base64.b64decode(r['image'].split(',')[1]))).convert('L');mask=im.point(lambda v:255 if v<128 else 0);parts=module.segments(mask);glyphs=[]
+  for c,(left,right) in zip('Hamburg',parts):
+   bb=mask.crop((left,0,right,mask.height)).getbbox();glyphs.append({'character':c,'x':left,'y':bb[1],'width':right-left,'height':bb[3]-bb[1]})
+  r['ocr']={'lines':[{'text':'Hamburg','confidence':1,'pixels':True,'glyphs':glyphs}]};result=run(r);self.assertEqual(result['status'],'measured',result);self.assertGreater(result['best']['shapeSimilarity'],90)
  def test_wrong_transcription_is_not_checked(self):
   r=self.fixture();r['text']='Hello!';self.assertEqual(run(r)['status'],'not_checked')
 if __name__=='__main__':unittest.main()

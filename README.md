@@ -53,7 +53,7 @@ flowchart TD
     G[Drop image] --> H[Resize locally and encode JPEG]
     H --> I[Click Analyze]
     I --> J{Comparison text supplied?}
-    J -->|No| K[Responses API reads and locates text; estimates weight, style, size]
+    J -->|No| K[Tesseract.js reads text positions; OpenAI fallback if needed]
     J -->|Yes| K
     K --> L[Use editable transcription]
     L --> T[Select nearby weights and styles when estimates are confident]
@@ -77,9 +77,10 @@ flowchart TD
 
 ## Run locally
 
-Requires **Node.js 22+**, **Python 3.10+**, and an OpenAI API key with access to the Decisions API. Preparing a font without a committed pack needs internet access.
+Requires **Node.js 22+**, **Python 3.10+**, and optionally an OpenAI API key with access to the Decisions API for the separate AI estimate. Preparing a font without a committed pack needs internet access.
 
 ```sh
+npm install
 npm run setup:fonts
 cp .env.example .env
 ```
@@ -102,11 +103,11 @@ The server generates all supported samples and sends at most six target-font she
 
 The preview box marks the padded text crop sent as the **target**. Automatic localization is approximate; check that the box includes the intended line. Drag over the preview to select a different region and enter its transcription; manual selections use broad references until a typography profile is available. When no valid region is returned, the full image is used and the result explicitly says so. Editing the transcription clears the box and triggers fresh localization on the next analysis. The first image is always the **target**. Following images are explicitly marked **reference only**. The prompt asks the model to compare shared letterforms and ignore font names printed in the target. That instruction reduces label reliance but does not guarantee the model will ignore labels or distinguish close lookalikes.
 
-Text extraction uses `gpt-4.1-mini` via the Responses API (`store: false`). Classification uses `gpt-6-luna` via `POST /v1/decisions`. OCR and classification are separately billed; token usage is shown separately. An OCR failure leaves manual transcription available. If no readable text is extracted, the checker can use generic diagnostic specimens.
+Text extraction starts with Tesseract.js in the backend. OpenAI fallback uses `gpt-4.1-mini` via the Responses API (`store: false`). Classification uses `gpt-6-luna` via `POST /v1/decisions`. Tesseract.js has no API charges. OpenAI fallback OCR and classification are separately billed; their token usage is shown separately. An OCR failure leaves manual transcription available. If no readable text is extracted, the checker can use generic diagnostic specimens.
 
 ## Adaptive reference selection
 
-The same Responses request that reads text also estimates a broad weight class, upright/italic style, apparent size, and certainty. High-certainty estimates select neighboring weights (not a single weight), the likely style, and two nearby text sizes for small or display text. Medium certainty uses wider weight ranges and keeps both styles; low certainty retains full coverage. Optical-size samples remain broad because raster text size does not establish the font’s optical-size axis. Manual transcriptions are preserved while the image is profiled.
+When OpenAI fallback reads text, its Responses request also estimates a broad weight class, upright/italic style, apparent size, and certainty. High-certainty estimates select neighboring weights (not a single weight), the likely style, and two nearby text sizes for small or display text. Medium certainty uses wider weight ranges and keeps both styles; low certainty retains full coverage. Optical-size samples remain broad because raster text size does not establish the font’s optical-size axis. Manual transcriptions are preserved while the image is profiled. Tesseract.js returns unknown typography estimates, so its path retains broad variant coverage.
 
 Filtered packs are cached by font, text, and selection. New filtered packs instantiate only the selected variants. Unavailable weight/style combinations fall back to full coverage. If a narrowed comparison returns 20–80% match probability with sufficient readable text, the server retries once with broader references. Both attempts and their total Decisions input tokens are reported. A failed broad retry leaves the first result visible with a notice. No retry runs for unreadable targets, already-broad comparisons, or confident results; confident mistakes remain possible.
 
@@ -171,7 +172,7 @@ The **6.11 px average spacing difference** is measured separately from consecuti
 
 Before the model comparison, `/api/measure` runs Pillow and FontTools locally. It isolates foreground pixels on a clean contrasting background, splits letters using vertical pixel projections, and renders the transcription from each available sampled font variant. Instantiated fonts are cached locally by font-file content and axis coordinates; uploaded image pixels and overlays are not written to disk.
 
-Candidate words are scaled uniformly to the target line height. Each letter is aligned independently without stretching its proportions. The score counts foreground pixels with a counterpart within a 1 px edge tolerance, permitting ±2 px translation. The UI shows the best mean shape similarity, lowest letter similarity, five candidate variants, and colored overlays: dark shared pixels, blue original-only pixels, orange reference-only pixels. These are measurement scores, not probabilities of font identity; no pass threshold has been calibrated.
+Candidate words are scaled uniformly to the target line height. Each letter is aligned independently without stretching its proportions. The score counts foreground pixels with a counterpart within a 1 px edge tolerance, permitting ±1 px translation. The UI shows the best mean shape similarity, lowest letter similarity, five candidate variants, and colored overlays: dark shared pixels, blue original-only pixels, orange reference-only pixels. These are measurement scores, not probabilities of font identity; no pass threshold has been calibrated.
 
 Spacing is measured separately as the mean absolute difference between consecutive letter left-edge distances after uniform scaling, in crop pixels. This includes tracking and word spaces; it is not a pure kerning score. Leading is not measured. Independent shape alignment intentionally removes spacing differences from the shape score.
 
@@ -193,4 +194,20 @@ If local segmentation fails, the browser makes one additional OCR request on the
 
 An isolated trailing pixel group wider than 1.3 times the line height can be excluded when OCR transcribes one fewer character (for example, a separate arrow icon). This is a heuristic and can misclassify an unusually wide glyph; similarity is not calibrated identity confidence. Background removal starts at crop corners rather than every edge pixel, avoiding removal of ordinary letters near the edges.
 
-The font-match result uses a large confidence percentage: green for estimates at least 80%, orange for intermediate estimates or insufficient readable text, and red for estimates at most 20%. These display thresholds are provisional; the percentage is the AI model estimate, not a measured success rate. Local shape similarity remains a separately labeled score and does not trigger the green font-confidence state.
+The font-match result uses a large confidence percentage: green only for estimates at least 80% supported by a strong local comparison, orange for intermediate estimates or insufficient readable text, and red for estimates at most 20%. These display thresholds are provisional; the percentage is the AI model estimate, not a measured success rate. Local shape similarity remains a separately labeled score and does not trigger the green font-confidence state.
+
+## OCR positions, comparison margins, and benchmark
+
+Tesseract.js runs OCR in the Node web backend using WebAssembly, without an API key or a macOS dependency. Its English language data downloads once and caches under `.cache/ocr`. It returns line and symbol boxes; Pillow refines foreground ink within those boxes. The first text-reading step uses this local OCR; OpenAI is a fallback when configured. The web UI supports local OCR and measurement without a key and skips the separate AI estimate in that mode. The service requires Node.js, Python and the renderer dependencies, so it needs a backend host supporting both runtimes (not static-only hosting).
+
+All candidate characters share one uniform scale derived from the line height. Independent translations are limited to ±1 px and never stretch individual glyphs. Each crop is also measured against two contrast families from Inter, Roboto, and Open Sans. The UI reports the score advantage over the closest measured contrast, marks near ties ambiguous, and reports incomplete comparison when contrasts cannot be measured. A score of at least 90 with a margin of at least 3 points is provisionally labeled “strong measured similarity”; this is not a validated identity threshold. Green AI styling additionally requires this measured support. AI probabilities remain uncalibrated estimates.
+
+Run `npm run benchmark:local` to measure the existing 44-case synthetic set without OpenAI API calls. The saved `eval/local-benchmark.json` reports measurement completion, strong false matches, missed positive comparisons and ambiguity, with every case preserved. This small dataset does not establish real-world accuracy or superiority over Glyphy. Add labeled real-image cases and more close negative families before calibrating thresholds.
+
+For a web host, install dependencies with `npm ci` and `npm run setup:fonts`, then start with `HOST=0.0.0.0 PORT=$PORT npm start` behind your hosting platform’s HTTPS proxy. Keep `.cache` persistent if supported. OpenAI keys stay on the server; omit the key for the local-only workflow. No deployment is performed by committing the source to GitHub.
+
+### Current local benchmark result
+
+The Tesseract.js run on the 44 existing synthetic fixtures measured **43/44 (97.7%)**, leaving one case not checked. With provisional shape ≥90 and a contrast advantage ≥3 points, **1 of 36 Inter cases** received a strong-similarity label; **0 of 8 negative cases** received that label. The other **42 measured cases were ambiguous**. High completion is not high identification accuracy: these results support improved measurement coverage, while font discrimination remains weak. The full per-case output is in [local-benchmark.json](eval/local-benchmark.json). The thresholds were not fitted to a held-out set, and no superiority over Glyphy is established.
+
+Local measurements do not use the OpenAI weight estimate to exclude candidate variants: all available sampled variants remain candidates. OpenAI profiling still narrows its separate reference-image comparison when available. Tesseract.js currently uses English OCR data, so recognition of other scripts is not validated even when the font contains their glyphs.
