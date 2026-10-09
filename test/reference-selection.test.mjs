@@ -8,5 +8,6 @@ test('narrowed rendered pack excludes unrelated variants and reuses cache',async
  const {attachFontReferences}=await import('../font-library.mjs');const {buildDecision}=await import('../decision.mjs');
  const selection=selectReferences({certainty:'high',weight:'regular',style:'upright',size:'body'});
  const {reference}=await attachFontReferences(buildDecision({image:'data:image/jpeg;base64,aGVsbG8=',font:'Inter',text:'Quiet mornings, bright ideas.'}),'Inter','Quiet mornings, bright ideas.',selection);
- assert.equal(reference.variantCount,6);assert.equal(reference.images,3);assert.ok(reference.cacheHit);assert.deepEqual(reference.selection,selection);
+ assert.equal(reference.variantCount,6);assert.equal(reference.images,3);assert.deepEqual(reference.selection,selection);
+ const repeated=await attachFontReferences(buildDecision({image:'data:image/jpeg;base64,aGVsbG8=',font:'Inter',text:'Quiet mornings, bright ideas.'}),'Inter','Quiet mornings, bright ideas.',selection);assert.ok(repeated.reference.cacheHit);
 });
