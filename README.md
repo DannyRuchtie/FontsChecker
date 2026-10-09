@@ -1,8 +1,34 @@
 # Fonts Checker
 
-Drop an image, choose a font, and compare its letterforms against references generated from the actual font files. A local prototype using OpenAI vision for text reading and the Decisions API for font-match estimates.
+Drop an image, choose a font, and compare its letterforms against references generated from the actual font files. A local prototype combining measured pixel overlap with OpenAI vision for text reading and the Decisions API for a separate font-match estimate.
 
 ![Fonts Checker checking an Inter specimen](docs/fonts-checker.png)
+
+## What you see
+
+1. **Select the text:** upload an image and drag a box around one complete line with the crosshair cursor. Enter that exact line, or let OCR locate a line automatically.
+2. **Inspect the layers:** the measurement result shows the original text pixels in blue and the actual font render in orange. Move the opacity slider to see how the aligned letters overlap.
+3. **Read the differences:** the combined overlay marks shared pixels dark, original-only pixels blue, and font-only pixels orange. Shape similarity and spacing difference are separate measurements.
+4. **Compare the model estimate:** OpenAI receives the selected crop and generated font specimens. Its probability is separate from the local similarity score; neither proves font identity.
+
+```mermaid
+flowchart LR
+    A[Selected text crop] --> B[Extract foreground pixels]
+    B --> C[Separate and align original letters: blue layer]
+    D[Actual font file and transcription] --> E[Render and uniformly scale font letters: orange layer]
+    C --> F[Stack aligned letter pairs]
+    E --> F
+    F --> G[Inspect layers with opacity slider]
+    F --> H[Measure overlap with edge tolerance]
+    H --> I[Shape similarity and per-letter scores]
+    B --> J[Compare original and rendered letter distances]
+    E --> J
+    J --> K[Separate spacing difference]
+```
+
+The UI also lists these processing steps next to the Analyze button, distinguishing local measurements from the AI estimate.
+
+Alignment moves each letter independently and preserves proportions. The layer view therefore explains shape comparison, not the original word spacing. Leading is not measured. If the line cannot be isolated reliably, the tool says **not checked** and offers no similarity score.
 
 ## What it does
 
@@ -30,7 +56,6 @@ flowchart TD
     J -->|No| K[Responses API reads and locates text; estimates weight, style, size]
     J -->|Yes| K
     K --> L[Use editable transcription]
-    K --> L
     L --> T[Select nearby weights and styles when estimates are confident]
     T --> M[Render the same words from actual target font files]
     D --> M

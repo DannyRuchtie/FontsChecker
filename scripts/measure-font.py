@@ -97,12 +97,15 @@ def run(r):
     spacing=sum(abs((runs[i][0]-runs[i-1][0])-(rr[i][0]-rr[i-1][0])) for i in range(1,len(runs)))/max(1,len(runs)-1)
     results.append({'weight':weight,'italic':bool(f['head'].macStyle&2) or 'italic' in path.name.lower(),'opticalSize':op,'shapeSimilarity':round(100*sum(scores)/len(scores),1),'minimumLetterSimilarity':round(100*min(scores),1),'spacingMeanDifferencePx':round(spacing,2),'letters':[{'letter':c,'similarity':round(v*100,1)} for c,v in zip(letters,scores)],'_overlays':overlays})
  if not results:return {'status':'not_checked','reason':'Candidate characters could not be separated reliably, or the font lacks the transcribed glyphs.'}
- results.sort(key=lambda v:v['shapeSimilarity'],reverse=True);best=results[0];pairs=best['_overlays'];width=sum(a.width+8 for a,b in pairs);height=max(a.height for a,b in pairs);canvas=Image.new('RGB',(width,height),'white');x=0
+ results.sort(key=lambda v:v['shapeSimilarity'],reverse=True);best=results[0];pairs=best['_overlays'];width=sum(a.width+8 for a,b in pairs);height=max(a.height for a,b in pairs);canvas=Image.new('RGB',(width,height),'white');original=Image.new('RGBA',(width,height));reference=Image.new('RGBA',(width,height));x=0
  for a,b in pairs:
-  tile=Image.new('RGB',a.size,'white');both=ImageChops.multiply(a,b);tile.paste('#2871ed',(0,0),a);tile.paste('#f47925',(0,0),b);tile.paste('#252b27',(0,0),both);canvas.paste(tile,(x,0));x+=a.width+8
+  tile=Image.new('RGB',a.size,'white');both=ImageChops.multiply(a,b);tile.paste('#2871ed',(0,0),a);tile.paste('#f47925',(0,0),b);tile.paste('#252b27',(0,0),both);canvas.paste(tile,(x,0));layer=Image.new('RGBA',a.size,'#2871ed');layer.putalpha(a);original.paste(layer,(x,0));layer=Image.new('RGBA',b.size,'#f47925');layer.putalpha(b);reference.paste(layer,(x,0));x+=a.width+8
+ def encoded(image):
+  buf=BytesIO();image.save(buf,format='PNG');return 'data:image/png;base64,'+base64.b64encode(buf.getvalue()).decode()
+ layers={'original':encoded(original),'reference':encoded(reference)}
  buf=BytesIO();canvas.save(buf,format='PNG')
  for v in results:v.pop('_overlays',None)
- return {'status':'measured','method':'Independent letter alignment, uniform word-height scaling, 1 px edge tolerance, translation ±2 px; no glyph stretching.','text':text,'coverage':len(letters),'best':best,'candidates':results[:5],'overlay':'data:image/png;base64,'+base64.b64encode(buf.getvalue()).decode(),'notice':'Similarity is not font identity confidence. Spacing is reported separately in crop pixels; leading is not measured. Clean single-line backgrounds only.'}
+ return {'status':'measured','method':'Independent letter alignment, uniform word-height scaling, 1 px edge tolerance, translation ±2 px; no glyph stretching.','text':text,'coverage':len(letters),'best':best,'candidates':results[:5],'layers':layers,'overlay':'data:image/png;base64,'+base64.b64encode(buf.getvalue()).decode(),'notice':'Similarity is not font identity confidence. Spacing is reported separately in crop pixels; leading is not measured. Clean single-line backgrounds only.'}
 if __name__=='__main__':
  try:print(json.dumps(run(json.load(sys.stdin))))
  except Exception:print(json.dumps({'status':'not_checked','reason':'Image segmentation or font rendering failed; no measurement reported.'}))
