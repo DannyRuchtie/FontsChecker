@@ -179,3 +179,7 @@ Segmentation tries both light-on-dark and dark-on-light masks and removes exteri
 Drawing a manual region with an empty text field now runs OCR on that region. If OCR returns no text, analysis stops before local measurement and the Decisions call, asks for transcription, and focuses the text field. This avoids spending classification tokens on a check that cannot produce a local overlay.
 
 Each new manual region clears the previous transcription and result. Analyze then reads that crop automatically unless you enter its exact text first, preventing a previous region’s words from being reused.
+
+If local segmentation fails, the browser makes one additional OCR request on the selected crop to recover a complete physical line, updates the transcription while preserving the selected crop, and retries local measurement once. This recovery adds OCR token cost and may still fail; no measurement score is invented when alignment is unavailable.
+
+An isolated trailing pixel group wider than 1.3 times the line height can be excluded when OCR transcribes one fewer character (for example, a separate arrow icon). This is a heuristic and can misclassify an unusually wide glyph; similarity is not calibrated identity confidence. Background removal starts at crop corners rather than every edge pixel, avoiding removal of ordinary letters near the edges.

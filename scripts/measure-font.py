@@ -47,12 +47,8 @@ def run(r):
  for polarity in [initial,ImageOps.invert(initial)]:
   mask=polarity.copy()
   # Remove exterior background components while retaining text inside panels.
-  for x in range(mask.width):
-   for y in [0,mask.height-1]:
-    if mask.getpixel((x,y)):ImageDraw.floodfill(mask,(x,y),0)
-  for y in range(mask.height):
-   for x in [0,mask.width-1]:
-    if mask.getpixel((x,y)):ImageDraw.floodfill(mask,(x,y),0)
+  for x,y in [(0,0),(mask.width-1,0),(0,mask.height-1),(mask.width-1,mask.height-1)]:
+   if mask.getpixel((x,y)):ImageDraw.floodfill(mask,(x,y),0)
   bbox=mask.getbbox()
   if not bbox:continue
   mask=mask.crop(bbox)
@@ -66,6 +62,9 @@ def run(r):
    if bb:candidates.append(line.crop(bb))
   for line in candidates:
    runs=segments(line)
+   # A wide isolated trailing icon (such as an arrow) is not a letter.
+   if len(runs)==len(letters)+1 and runs[-1][1]-runs[-1][0]>line.height*1.3:
+    line=line.crop((0,0,runs[-2][1],line.height));runs=segments(line)
    if len(runs)==len(letters) and line.height>=16:
     if not any(line.size==v.size and line.tobytes()==v.tobytes() for v in options):options.append(line)
  if len(options)!=1:return {'status':'not_checked','reason':'Could not isolate one complete line matching the transcription. The box may clip letters, include other lines, or contain touching glyphs. Drag around the complete text line and enter exactly that line.'}
