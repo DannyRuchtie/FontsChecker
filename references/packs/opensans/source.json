@@ -1,0 +1,20 @@
+{
+  "family": "Open Sans",
+  "source": "https://github.com/google/fonts/tree/main/ofl/opensans",
+  "files": [
+    {
+      "file": "OpenSans-Italic[wdth,wght].ttf",
+      "sha256": "fe269381e992f32e135801740998544d6235061e37c93ec067ad2be3edd5b17b",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/opensans/OpenSans-Italic%5Bwdth%2Cwght%5D.ttf",
+      "gitBlob": "6c2997999ce43d4ab5b377b712f2b10aca5e4bc1"
+    },
+    {
+      "file": "OpenSans[wdth,wght].ttf",
+      "sha256": "36643644f318a812aab2d2ed3bb98f8cf0872527f835fe9398d95fe6b9adb878",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/opensans/OpenSans%5Bwdth%2Cwght%5D.ttf",
+      "gitBlob": "9db85693b027f3b05f6d77471d215f20707127c1"
+    }
+  ],
+  "license": "OFL.txt",
+  "downloadedAt": "2026-10-09T13:32:09.571Z"
+}

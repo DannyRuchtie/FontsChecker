@@ -1,0 +1,20 @@
+{
+  "family": "Roboto",
+  "source": "https://github.com/google/fonts/tree/main/ofl/roboto",
+  "files": [
+    {
+      "file": "Roboto-Italic[wdth,wght].ttf",
+      "sha256": "9725a847af6b460ffca162ae66d20dad48b01876137947180b42d7dcd7887182",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/roboto/Roboto-Italic%5Bwdth%2Cwght%5D.ttf",
+      "gitBlob": "a122c13964daac37f1186a22603a5180d2dba5d6"
+    },
+    {
+      "file": "Roboto[wdth,wght].ttf",
+      "sha256": "d7598e12c5dbef095ff8272cfc55da0250bd07fbdecbac8a530b9b277872a134",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/roboto/Roboto%5Bwdth%2Cwght%5D.ttf",
+      "gitBlob": "5522a368d9072fd88c299916e61fcff369949061"
+    }
+  ],
+  "license": "OFL.txt",
+  "downloadedAt": "2026-10-09T13:32:03.536Z"
+}

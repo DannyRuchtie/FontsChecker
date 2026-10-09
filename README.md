@@ -1,80 +1,117 @@
 # Fonts Checker
 
-Drop an image and check whether its text uses a font you choose. A small prototype powered by OpenAI’s Decisions API.
+Drop an image, choose a font, and compare its letterforms against references generated from the actual font files. A local prototype using OpenAI vision for text reading and the Decisions API for font-match estimates.
 
-![Fonts Checker comparing an Inter numeral specimen with official references](docs/fonts-checker.png)
+![Fonts Checker checking an Inter specimen](docs/fonts-checker.png)
 
 ## What it does
 
-- **Target font:** choose Inter or enter another font family to estimate whether readable text uses it.
-- **Inter reference pack:** every Inter check includes official specimens; automatically read a line with the Responses API and add specimens rendered with the same words. You can edit that text.
-- Resize images locally before upload, then show probabilities, response time, and token usage.
+- Downloads a selected Google Fonts family, preserving its license and recording source URLs and file hashes. Inter uses the bundled official Inter 4.1 files from [Rasmus Andersson](https://rsms.me/inter/).
+- Generates clean reference sheets across available standard weights, upright/italic styles, sampled optical sizes, and **18, 32, and 52 px** text sizes.
+- Reads a line from your image automatically, then renders the same text in the selected font for comparison. You can correct the transcription and analyze again.
+- Includes comparison specimens from two other families (chosen from Inter, Roboto, and Open Sans) to challenge lookalike matches.
+- Shows the estimated probability of a font match, a separate text-readability estimate, actual API token usage, and the reference images used.
+- Caches font files and generated specimens locally so repeated checks reuse them. Committed diagnostic packs for Inter, Roboto, and Open Sans make initial preparation immediate on a fresh checkout.
 
-Font matches are visual estimates. Similar fonts can be hard to distinguish, and an image cannot establish font origin or licensing. The app does not search the entire Google Fonts catalog.
+## Workflow
 
-## How it works
-
-1. The browser decodes your image, scales it to the selected maximum edge length (1,024 px by default), and encodes it as JPEG. This reduces dimensions before the API request; it does not extract text or identify fonts locally.
-2. When you click **Analyze image**, the local server sends the resized image as an inline base64 data URL, plus a question, to OpenAI’s Decisions API.
-3. The question asks whether readable target text uses your chosen family and receives an estimated probability. Inter always includes its reference pack. For Inter, a blank transcription triggers automatic text extraction with `gpt-4.1-mini` via the Responses API (`store: false`). The extracted text is editable; OCR can make mistakes. A transcription adds four locally rendered matching-text atlases, spanning 36 Inter variants; these are also sent to OpenAI.
-4. The interface displays that result, request time, and token usage. Specific-font checks use provisional thresholds: 80% or more is “likely,” 20% or less is “unlikely,” and the middle is “inconclusive.” These thresholds have not been calibrated against a labeled dataset.
-
-### Where does the font comparison come from?
-
-For **Inter**, requests now include four reference images rendered from Rasmus Andersson’s official [Inter 4.1 files](https://rsms.me/inter/). They cover weights 100–900 in upright and italic at optical sizes 14 and 32. The target image comes first; the prompt explicitly separates it from reference specimens so the presence of Inter in a reference must not count as a target match. Original font files, the SIL Open Font License, source URLs, and SHA-256 hashes are included under `references/inter/`.
-
-Reference packs are selected by target family in `inter-reference.mjs`; add a licensed pack and renderer for another family to give it the same foundation. Fonts without a pack are explicitly marked in the interface. This is reference-assisted recognition, not model training. The model receives the specimens on each relevant request; it does not permanently learn from them. Intermediate variable weights, every OpenType alternate, older Inter versions, and every language are not exhaustively represented. Extra reference images also add input tokens. The standard pack covers a diagnostic Latin subset; matching-text rendering is limited by glyph coverage and scales long lines to fit. Every possible OpenType setting is not covered.
-
-Other font families still rely on the model’s existing knowledge. The app does not fetch their font files or validate names against Google Fonts. OpenAI does not document which font training examples support an answer, and probabilities are model estimates rather than measured glyph similarity.
-
-### Measuring Inter detection
-
-`eval/` contains 36 synthetic Inter examples (nine weights × two styles × two optical sizes) plus eight negative examples rendered in Arial, Helvetica, Verdana, and Times New Roman. Evaluation text differs from the reference specimens and includes no font names. These are starter test cases, not evidence of production accuracy; add real screenshots, close lookalikes such as Roboto and SF Pro, blur, small text, mixed fonts, alternate glyphs, and misleading labels.
-
-Run a baseline-versus-reference comparison after configuring a key:
-
-```sh
-node --env-file-if-exists=.env scripts/evaluate-inter.mjs
+```mermaid
+flowchart TD
+    A[Choose target font] --> B{Font cached?}
+    B -->|No| C[Download actual font files and license]
+    B -->|Yes| D[Read local font pack]
+    C --> D
+    D --> E[Inspect font axes, weights, styles and glyph coverage]
+    E --> F[Generate and cache diagnostic specimens at 18, 32 and 52 px]
+    G[Drop image] --> H[Resize locally and encode JPEG]
+    H --> I[Click Analyze]
+    I --> J{Comparison text supplied?}
+    J -->|No| K[Responses API reads a visible line with OCR]
+    J -->|Yes| L[Use editable transcription]
+    K --> L
+    L --> M[Render the same words from actual target font files]
+    D --> M
+    F --> N[Choose generic or matching-text sheets, up to six]
+    M --> N
+    H --> O[Decisions API]
+    N --> O
+    R[Render known different fonts using the same words] --> O
+    O --> S[Compare target and contrast letterforms]
+    O --> P[Estimate font match and readable text sufficiency]
+    P --> Q[Show likely, unlikely or inconclusive plus reference previews]
 ```
-
-This makes 88 API requests and reports positive, negative, inconclusive, and refused decisions separately. Results are saved locally under ignored `eval/results/`. The initial run did not establish reliable detection; use an independent held-out set before choosing thresholds or claiming reliability.
-
-To regenerate specimens and fixtures, install Pillow, fonttools, and brotli in a Python environment, then run `python scripts/render-inter.py`. Negative fixture regeneration currently uses macOS system fonts; their font files are not distributed. Reference assets use the included SIL Open Font License.
 
 ## Run locally
 
-Requires Node.js 22+ and an OpenAI API key with access to the Decisions API.
+Requires **Node.js 22+**, **Python 3.10+**, and an OpenAI API key with access to the Decisions API. Preparing a font without a committed pack needs internet access.
 
 ```sh
+npm run setup:fonts
 cp .env.example .env
 ```
 
-Add your key as `OPENAI_API_KEY` in `.env`, then start:
+Add your key as `OPENAI_API_KEY` in `.env`, then:
 
 ```sh
 npm start
 ```
 
-Open [localhost:3000](http://localhost:3000). The key stays on the server, and `.env` is excluded from Git. Images are sent to OpenAI only when you click **Analyze image**; the app does not save uploaded images.
+Open [localhost:3000](http://localhost:3000). Select a family such as Inter, Roboto, Open Sans, Montserrat, or Poppins. Font preparation begins after you stop typing. An unavailable family produces an error rather than silently using a substitute font. Proprietary families such as Arial and Helvetica cannot be downloaded through this provider.
 
-## Development
+PNG, JPEG, and WebP uploads up to 20 MB are resized locally to a selected maximum edge length of 768, 1,024, or 1,600 px. Uploads are sent to OpenAI only when you click **Analyze image**. Crop to the text for the best chance of a useful result.
 
-No dependencies. Run `npm test` to check request validation and API payloads.
+## How the comparison works
 
-Uses `POST /v1/decisions` with `gpt-6-luna`. See the [Decisions API documentation](https://developers.openai.com/api/docs/guides/decisions).
+Font files come from the official [Google Fonts repository](https://github.com/google/fonts), or bundled official Inter files. FontTools reads the font’s real weight and optical-size axes; Pillow renders specimens from instantiated font data. Static families use the styles actually present in their package. Variable weights are sampled at standard hundreds and axis endpoints; optical sizes use minimum, default, and a display sample where available. Other axes stay at defaults. This samples a family rather than enumerating every possible variation or OpenType feature.
 
-### Initial evaluation (9 October 2026)
+The server generates all supported samples and sends at most six target-font sheets spanning the pack, plus two contrast sheets from different families, to keep requests bounded. Contrast sources are Inter, Roboto, and Open Sans, excluding the selected family. Each row includes multiple text sizes. The result reports whether all reference sheets were reused from cache. Long transcriptions are fitted by using a prefix at each size; missing glyphs cause an explicit error instead of rendering fallback characters. Font source details and exactly which variants were sent are included in the request and returned with the result.
 
-At the provisional 80% / 20% thresholds:
+The first image is always the **target**. Following images are explicitly marked **reference only**. The prompt asks the model to compare shared letterforms and ignore font names printed in the target. That instruction reduces label reliance but does not guarantee the model will ignore labels or distinguish close lookalikes.
 
-| Outcome | Names only | With Inter references |
-| --- | ---: | ---: |
-| Inter confidently identified (36 cases) | 0 | 0 |
-| Inter incorrectly rejected | 10 | 3 |
-| Non-Inter correctly rejected (8 cases) | 2 | 2 |
-| Non-Inter incorrectly accepted | 0 | 0 |
-| Inconclusive (all 44 cases) | 32 | 39 |
+Text extraction uses `gpt-4.1-mini` via the Responses API (`store: false`). Classification uses `gpt-6-luna` via `POST /v1/decisions`. OCR and classification are separately billed; token usage is shown separately. An OCR failure leaves manual transcription available. If no readable text is extracted, the checker can use generic diagnostic specimens.
 
-References reduced confident false negatives in this small synthetic test, but did not produce confident positive identification. **This prototype is not yet a reliable Inter detector.** Results are from one run, with a limited negative set and shared test phrasing; they do not measure real-world accuracy or establish statistical improvement. Model behavior can vary between runs.
+## Confidence and limitations
 
-Automatic text extraction adds a separately billed Responses request; its input and output token usage is shown separately from the Decisions request. A text-reading failure leaves manual entry available. Other fonts do not run automatic extraction until a matching-text reference renderer is available.
+Results are **model estimates, not measured accuracy or glyph similarity scores**. A probability of at least 80% is shown as “likely,” at most 20% as “unlikely,” and the middle as “inconclusive.” A low readable-text estimate overrides the headline to indicate insufficient text. These thresholds are provisional and uncalibrated.
+
+Reference generation supplies concrete comparison evidence; it does not train or permanently modify the model. Small text, blur, alternate glyphs, mixed typography, unsupported scripts, and similar fonts can still produce incorrect answers. An image cannot establish font provenance or licensing. More references do not guarantee better recognition.
+
+The latest 44-case synthetic evaluation (9 October 2026) compared names-only decisions against matching-text target specimens plus contrast specimens. At the provisional thresholds, reference-assisted checking confidently identified **12 of 36 Inter cases**, rejected 3 Inter cases, correctly rejected 2 of 8 non-Inter cases, and incorrectly accepted 3 non-Inter cases. Twenty-four cases were inconclusive. The [saved evaluation summary](eval/latest-summary.json) records these counts. The names-only baseline identified 1 Inter case; 11 baseline questions were refused. These results show that references help some positives but **do not establish reliable discrimination of lookalikes**. The dataset is small, synthetic, uses shared text, and has few negative families. The hero screenshot is an example result, not an accuracy claim.
+
+## Development and evaluation
+
+```sh
+npm test
+```
+
+Tests cover payload validation, safe font identifiers, reference path handling, generated Inter coverage, and separation of target and reference inputs. Set up the Python renderer before running tests.
+
+`scripts/evaluate-font.mjs` compares names-only and generated-reference decisions on the included labeled fixtures:
+
+```sh
+node --env-file-if-exists=.env scripts/evaluate-font.mjs Inter
+```
+
+For Inter this makes 88 separately billed Decisions requests: 36 positive cases and eight negative cases, each tested with and without generated matching-text references. The same Inter fixtures can serve as negative cases for another target family, but add actual positive examples for that family before interpreting its results. Synthetic fixtures use text distinct from the diagnostic references. Add real screenshots and difficult lookalikes to broaden the test; keep comparison references separate from evaluation targets. Results are saved under ignored `eval/results/`.
+
+## Storage and sources
+
+- `.env` stays local and is excluded from Git. The server binds to localhost.
+- `.cache/fonts/` stores downloaded fonts, licenses, source hashes, generated sheets, and transcribed text used to generate them. It is ignored by Git. Uploaded target images are not saved by the app. OpenAI’s data handling still applies to API requests.
+- `.renderer/` contains the local Python environment and is ignored by Git. Dependencies are pinned in `scripts/requirements.txt`.
+- Inter’s bundled font files retain the SIL Open Font License in `references/inter/LICENSE.txt`. Downloaded fonts retain their respective license files.
+
+See [OpenAI Decisions](https://developers.openai.com/api/docs/guides/decisions), [OpenAI image input](https://developers.openai.com/api/docs/guides/images-vision), and [Google Fonts source files](https://github.com/google/fonts).
+
+## Prebuilt packs and caching
+
+`references/packs/` contains font files, licenses, provenance, and generic reference sheets for Inter, Roboto, and Open Sans. A fresh checkout seeds its local cache from these committed packs. Generic generation therefore does not run again for these families. Adding another selected font downloads and renders it once. Matching-text packs are cached by family and transcription; changing the words creates a new pack, while repeated words reuse the existing one. The first new transcription can take tens of seconds to render. Font files are pinned to the cached or committed version; upstream updates do not silently replace them.
+
+To prepare and commit another generic family pack:
+
+```sh
+npm run prebuild:fonts -- Montserrat
+git add references/packs/montserrat
+```
+
+The exporter copies only generic diagnostic references, fonts, licenses, and source metadata. It never exports cached user transcriptions. These remain under ignored `.cache/fonts/`. Regenerate packs deliberately when updating font files or the renderer.

@@ -1,0 +1,16 @@
+{
+  "family": "Inter",
+  "source": "https://rsms.me/inter/",
+  "version": "4.1",
+  "files": [
+    {
+      "file": "InterVariable.woff2",
+      "sha256": "693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3"
+    },
+    {
+      "file": "InterVariable-Italic.woff2",
+      "sha256": "e564f652916db6c139570fefb9524a77c4d48f30c92928de9db19b6b5c7a262a"
+    }
+  ],
+  "license": "LICENSE.txt"
+}

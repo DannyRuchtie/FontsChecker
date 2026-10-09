@@ -1,11 +1,13 @@
 import http from 'node:http';
 import {readFile} from 'node:fs/promises';
 import {validateImage,buildDecision} from './decision.mjs';
-import {addInterReferences} from './inter-reference.mjs';
+import {prepareFont,attachFontReferences,referenceFile} from './font-library.mjs';
 const assets = {'/':['index.html','text/html'], '/app.js':['app.js','text/javascript'], '/style.css':['style.css','text/css'], '/inter-fonts.css':['inter-fonts.css','text/css']};
 function json(res,status,data){res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(data));}
 const server = http.createServer(async(req,res)=>{
   try {
+    if(req.method==='GET' && req.url.startsWith('/api/font?')){try{const font=new URL(req.url,'http://localhost').searchParams.get('name');const {directory,...data}=await prepareFont(font);return json(res,200,data);}catch(e){return json(res,400,{error:e.message});}}
+    if(req.method==='GET' && req.url.startsWith('/api/reference/')){try{const data=await referenceFile(req.url.slice('/api/reference'.length));res.writeHead(200,{'Content-Type':'image/jpeg'});return res.end(data);}catch{return json(res,404,{error:'Reference not found.'});}}
     if(req.method==='GET' && req.url==='/api/status') return json(res,200,{configured:!!process.env.OPENAI_API_KEY});
     if(req.method==='POST' && req.url==='/api/extract-text') {
       if(req.headers.origin && req.headers.origin!==`http://${req.headers.host}`)return json(res,403,{error:'Request origin is not allowed.'});
@@ -22,7 +24,7 @@ const server = http.createServer(async(req,res)=>{
       if(req.headers.origin && req.headers.origin!==`http://${req.headers.host}`) return json(res,403,{error:'Request origin is not allowed.'});
       let body='';
       for await(const chunk of req){body+=chunk;if(body.length>15_100_000) return json(res,413,{error:'Image request is too large.'});}
-      let payload,reference;try{const request=JSON.parse(body); const base=buildDecision(request); ({payload,reference}=addInterReferences(base,request.text?.trim()?request.matchedImages:[]));}catch(e){return json(res,400,{error:e.message});}
+      let payload,reference;try{const request=JSON.parse(body); const base=buildDecision(request); ({payload,reference}=await attachFontReferences(base,request.font||'Inter',request.text?.trim()||''));}catch(e){return json(res,400,{error:e.message});}
       if(!process.env.OPENAI_API_KEY) return json(res,503,{error:'Add OPENAI_API_KEY to the server’s .env file, then restart npm start.'});
       const started=Date.now();
       const upstream=await fetch('https://api.openai.com/v1/decisions',{method:'POST',headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify(payload),signal:AbortSignal.timeout(60000)});

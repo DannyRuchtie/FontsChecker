@@ -1,0 +1,680 @@
+{
+  "atlases": [
+    {
+      "file": "renders/f7c3668944a7d72cbe71/atlas-0.jpg",
+      "variants": [
+        {
+          "weight": 100,
+          "italic": true,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 200,
+          "italic": true,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 300,
+          "italic": true,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 400,
+          "italic": true,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 500,
+          "italic": true,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 600,
+          "italic": true,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 700,
+          "italic": true,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 800,
+          "italic": true,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 900,
+          "italic": true,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "file": "renders/f7c3668944a7d72cbe71/atlas-1.jpg",
+      "variants": [
+        {
+          "weight": 100,
+          "italic": true,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 200,
+          "italic": true,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 300,
+          "italic": true,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 400,
+          "italic": true,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 500,
+          "italic": true,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 600,
+          "italic": true,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 700,
+          "italic": true,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 800,
+          "italic": true,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 900,
+          "italic": true,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable-Italic.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "file": "renders/f7c3668944a7d72cbe71/atlas-2.jpg",
+      "variants": [
+        {
+          "weight": 100,
+          "italic": false,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 200,
+          "italic": false,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 300,
+          "italic": false,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 400,
+          "italic": false,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 500,
+          "italic": false,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 600,
+          "italic": false,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 700,
+          "italic": false,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 800,
+          "italic": false,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 900,
+          "italic": false,
+          "opticalSize": 14,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "file": "renders/f7c3668944a7d72cbe71/atlas-3.jpg",
+      "variants": [
+        {
+          "weight": 100,
+          "italic": false,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 200,
+          "italic": false,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 300,
+          "italic": false,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 400,
+          "italic": false,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 500,
+          "italic": false,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 600,
+          "italic": false,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 700,
+          "italic": false,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 800,
+          "italic": false,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        },
+        {
+          "weight": 900,
+          "italic": false,
+          "opticalSize": 32,
+          "sourceFile": "InterVariable.woff2",
+          "axes": {
+            "opsz": [
+              14,
+              14,
+              32
+            ],
+            "wght": [
+              100,
+              400,
+              900
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variantCount": 36,
+  "sizes": [
+    18,
+    32,
+    52
+  ],
+  "text": "Ag a g e R G Q I l 1 0 O @ & 0123456789",
+  "defaultAxesOnly": true
+}

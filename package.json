@@ -1,1 +1,14 @@
-{"name":"fonts-checker","private":true,"type":"module","scripts":{"start":"node --env-file-if-exists=.env server.mjs","test":"node --test"},"engines":{"node":">=22"}}
+{
+  "name": "fonts-checker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.mjs",
+    "test": "node --test",
+    "setup:fonts": "bash scripts/setup-renderer.sh",
+    "prebuild:fonts": "node scripts/prebuild-fonts.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
