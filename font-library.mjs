@@ -9,7 +9,7 @@ async function render(directory,text,selection=null){
  const key=directory+':'+text+JSON.stringify(selection);if(rendering.has(key))return rendering.get(key);const task=renderOnce(directory,text,selection);rendering.set(key,task);try{return await task;}finally{rendering.delete(key);}
 }
 async function renderOnce(directory,text,selection){
- const key=createHash('sha256').update(selection?'v2:'+text+JSON.stringify(selection):'v1:'+text).digest('hex').slice(0,20);const file=resolve(directory,'renders',key,'manifest.json');
+ const hash=createHash('sha256').update(selection?'v2:'+text+JSON.stringify(selection):'v1:'+text);if(text||selection){const metadata=JSON.parse(await readFile(resolve(directory,'source.json'),'utf8'));for(const source of metadata.files)hash.update(await readFile(resolve(directory,source.file)));hash.update(await readFile('scripts/render-font.py'));hash.update(await readFile('scripts/font-instances.py'));}const key=hash.digest('hex').slice(0,20);const file=resolve(directory,'renders',key,'manifest.json');
  try{return {...JSON.parse(await readFile(file,'utf8')),cacheHit:true};}catch{}
  const script=resolve('scripts/render-font.py');
  // stdin avoids shell interpolation of font names and transcribed text.
@@ -37,21 +37,20 @@ export async function prepareFont(name){const id=fontId(name);if(!id)throw Error
  }
  const pack=await render(directory,'');return {...metadata,id,directory,pack};})();inflight.set(id,task);try{return await task;}finally{inflight.delete(id);}}
 export async function attachFontReferences(payload,font,text='',selection=null){
- const prepared=await prepareFont(font);let effectiveSelection=selection;let pack=text||selection?await render(prepared.directory,text,selection):prepared.pack;
+ const prepared=await prepareFont(font);if(text&&text.length<=18)selection={minWeight:100,maxWeight:1000,style:'unknown',sizes:[52],compact:true};let effectiveSelection=selection;let pack=text||selection?await render(prepared.directory,text,selection):prepared.pack;
  if(!pack.variantCount){pack=text?await render(prepared.directory,text):prepared.pack;effectiveSelection=null;}
  // Cap transmission, not generation. Select pages across all styles/optical sizes.
  const atlases=pack.atlases.length<=6?pack.atlases:Array.from({length:6},(_,i)=>pack.atlases[Math.round(i*(pack.atlases.length-1)/5)]);
  const parts=payload.input[0].content;parts[0].text+=` The first image is the TARGET. The next ${atlases.length} images are REFERENCE ONLY, rendered from actual ${JSON.stringify(prepared.family)} font files. Never treat reference text as target evidence. They include available weights, upright/italic and optical-size samples at ${pack.sizes.join(", ")} pixels. Other axes remain at defaults. Compare shared glyphs across multiple characters; if references are insufficient or a lookalike cannot be distinguished, remain uncertain.`;
  parts.push({type:'input_text',text:'REFERENCE ONLY. Variant labels and font source metadata: '+JSON.stringify(atlases.map(x=>x.variants))},...await Promise.all(atlases.map(async x=>({type:'input_image',image_url:'data:image/jpeg;base64,'+(await readFile(resolve(prepared.directory,x.file))).toString('base64')}))));
- const contrasts=[];
- for(const name of ['Inter','Roboto','Open Sans'].filter(name=>fontId(name)!==prepared.id).slice(0,2)){
-  const other=await prepareFont(name);let otherPack;try{otherPack=text||selection?await render(other.directory,text,selection):other.pack;}catch(e){if(e.message.includes('does not support'))continue;throw e;}
+ const contrastParts=await Promise.all(['Inter','Roboto','Open Sans'].filter(name=>fontId(name)!==prepared.id).slice(0,2).map(async name=>{
+  const other=await prepareFont(name);let otherPack;try{otherPack=text||selection?await render(other.directory,text,selection):other.pack;}catch(e){if(e.message.includes('does not support'))return null;throw e;}
   if(!otherPack.variantCount)otherPack=text?await render(other.directory,text):other.pack;
   const sheet=otherPack.atlases.find(x=>x.variants.some(v=>!v.italic&&v.weight===400))||otherPack.atlases[0];
-  parts.push({type:'input_text',text:`CONTRAST REFERENCE ONLY: ${other.family}, a different font. Compare shared target glyphs against these too. This is not target evidence.`},{type:'input_image',image_url:'data:image/jpeg;base64,'+(await readFile(resolve(other.directory,sheet.file))).toString('base64')});
-  contrasts.push({cacheHit:otherPack.cacheHit,family:other.family,source:other.source,previewUrl:`/api/reference/${other.id}/${sheet.file}`});
- }
+  return {parts:[{type:'input_text',text:`CONTRAST REFERENCE ONLY: ${other.family}, a different font. Compare shared target glyphs against these too. This is not target evidence.`},{type:'input_image',image_url:'data:image/jpeg;base64,'+(await readFile(resolve(other.directory,sheet.file))).toString('base64')}],reference:{cacheHit:otherPack.cacheHit,family:other.family,source:other.source,previewUrl:`/api/reference/${other.id}/${sheet.file}`}};
+ }));
+ const contrasts=[];for(const contrast of contrastParts.filter(Boolean)){parts.push(...contrast.parts);contrasts.push(contrast.reference);}
  payload.questions[0].instructions+=' Compare the target against BOTH the requested font and the differently named contrast references. If a contrast font explains the glyphs equally well, do not confidently declare a match. Similarity to a broad sans-serif category is insufficient.';
- return {payload,reference:{family:prepared.family,source:prepared.source,version:prepared.version,images:atlases.length+contrasts.length,generatedImages:pack.atlases.length,contrasts,variantCount:pack.variantCount,selection:effectiveSelection,sizes:pack.sizes,matchedText:!!text,cacheHit:pack.cacheHit&&contrasts.every(x=>x.cacheHit),coverage:'Available standard weights, styles and sampled optical sizes; other axes default.',previewUrls:atlases.map(x=>`/api/reference/${prepared.id}/${x.file}`)}};
+ return {payload,reference:{family:prepared.family,source:prepared.source,version:prepared.version,images:atlases.length+contrasts.length,generatedImages:pack.atlases.length,contrasts,variantCount:pack.variantCount,selection:effectiveSelection,sizes:pack.sizes,matchedText:!!text,compact:!!effectiveSelection?.compact,cacheHit:pack.cacheHit&&contrasts.every(x=>x.cacheHit),coverage:'Available standard weights, styles and sampled optical sizes; other axes default.',previewUrls:atlases.map(x=>`/api/reference/${prepared.id}/${x.file}`)}};
 }
 export async function referenceFile(path){if(!/^\/[a-z0-9]+\/renders\/[a-f0-9]{20}\/atlas-\d+\.jpg$/.test(path))throw Error('Invalid reference path.');return readFile(resolve(root,'.'+path));}

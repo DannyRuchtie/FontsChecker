@@ -1,0 +1,117 @@
+{
+  "evaluatedOn": "2026-10-09T16:26:47.229Z",
+  "method": "Automatic line selection at 1024 px followed by local exact Dice measurement. OCR text is uncorrected; no accuracy rate inferred from user labels. No OpenAI calls.",
+  "results": [
+    {
+      "file": "Screenshot 2026-10-09 at 17.15.49.png",
+      "sha256": "8fea7404b3cd70f58d2a4a2077aaa10c6ab7edc97c623cb398c3559ea2da10b9",
+      "label": "Inter (user supplied; not independently verified)",
+      "ocrText": "Glyphs",
+      "ocrConfidence": 0.95,
+      "status": "measured",
+      "score": 97.9,
+      "edgeToleranceSimilarity": 100,
+      "margin": 7,
+      "labelResult": "Strong measured similarity",
+      "elapsedMs": 1283
+    },
+    {
+      "file": "Screenshot 2026-10-09 at 17.15.44.png",
+      "sha256": "80502351f2c18c082b83925a885bdfdf2b3da203e0f69dcb010de31959f25bdd",
+      "label": "Inter (user supplied; not independently verified)",
+      "ocrText": "Efficient after",
+      "ocrConfidence": 0.96,
+      "status": "not_checked",
+      "reason": "Could not isolate one complete line matching the transcription. The box may clip letters, include other lines, or contain touching glyphs. Drag around the complete text line and enter exactly that line.",
+      "elapsedMs": 727
+    },
+    {
+      "file": "Screenshot 2026-10-09 at 17.15.40.png",
+      "sha256": "1c92e34520f94f3976044b4e8960ec65456eed344096583e6c16c03faab6db32",
+      "label": "Inter (user supplied; not independently verified)",
+      "ocrText": "ABC123abc (+)-[=]",
+      "ocrConfidence": 0.87,
+      "status": "measured",
+      "score": 83,
+      "edgeToleranceSimilarity": 99.2,
+      "margin": 3.9,
+      "labelResult": "Similar fonts remain ambiguous",
+      "elapsedMs": 799
+    },
+    {
+      "file": "Screenshot 2026-10-09 at 17.15.34.png",
+      "sha256": "dd3cec98947b9181d300e9c0b69937508007a5aa38ffc40dd1c7f8c07c27cd14",
+      "label": "Inter (user supplied; not independently verified)",
+      "ocrText": "Assimilation engine",
+      "ocrConfidence": 0.96,
+      "status": "measured",
+      "score": 97.8,
+      "edgeToleranceSimilarity": 100,
+      "margin": 4.3,
+      "labelResult": "Strong measured similarity",
+      "elapsedMs": 2569
+    },
+    {
+      "file": "Screenshot 2026-10-09 at 17.15.28.png",
+      "sha256": "6986915e95dbe291c801aa4914163b5055d2f52ef00a2a5e81f8795f6ec5301e",
+      "label": "Inter (user supplied; not independently verified)",
+      "ocrText": "abcdefghijklm",
+      "ocrConfidence": 0.89,
+      "status": "measured",
+      "score": 94,
+      "edgeToleranceSimilarity": 99.2,
+      "margin": 3.6,
+      "labelResult": "Strong measured similarity",
+      "elapsedMs": 1907
+    },
+    {
+      "file": "Screenshot 2026-10-09 at 17.14.34.png",
+      "sha256": "d5da9a500ef838a54a11d092de0d290e56a5a4e809176dd0ea194faad2b8d428",
+      "label": "Inter (user supplied; not independently verified)",
+      "ocrText": "abcdetghijkim",
+      "ocrConfidence": 0.53,
+      "status": "not_checked",
+      "reason": "No complete OCR line with at least 75% OCR confidence; manual correction required",
+      "elapsedMs": 146
+    },
+    {
+      "file": "inter-ui-font-family.png",
+      "sha256": "202caf68e76d698c5b92a769d982e6e5283415377683c144b759668714463329",
+      "label": "Inter (user supplied; not independently verified)",
+      "ocrText": "hice to meet you.",
+      "ocrConfidence": 0.96,
+      "status": "measured",
+      "score": 85.5,
+      "edgeToleranceSimilarity": 91.7,
+      "margin": -0.2,
+      "labelResult": "Similar fonts remain ambiguous",
+      "elapsedMs": 1631
+    },
+    {
+      "file": "inter-ui-font.png",
+      "sha256": "be7d0a93f337940cc8f993c9207458994bcfd62880a322ffd408add14e058753",
+      "label": "Inter (user supplied; not independently verified)",
+      "ocrText": "Januar",
+      "ocrConfidence": 0.94,
+      "status": "measured",
+      "score": 94.5,
+      "edgeToleranceSimilarity": 98.9,
+      "margin": -2.3,
+      "labelResult": "Similar fonts remain ambiguous",
+      "elapsedMs": 813
+    },
+    {
+      "file": "inter-ui-font-02.png",
+      "sha256": "e157753c05cc08b77beb15b47f93918a51dfce6ab8fa68320bde5f0387713c6c",
+      "label": "Inter (user supplied; not independently verified)",
+      "ocrText": "Grafik Design",
+      "ocrConfidence": 0.96,
+      "status": "measured",
+      "score": 92.9,
+      "edgeToleranceSimilarity": 100,
+      "margin": 1.4,
+      "labelResult": "Similar fonts remain ambiguous",
+      "elapsedMs": 913
+    }
+  ]
+}

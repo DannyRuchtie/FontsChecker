@@ -1,0 +1,132 @@
+{
+  "evaluatedOn": "2026-10-09T16:34:20.679249+00:00",
+  "scope": "Development observations during this review. Not a latency SLA or calibrated font-identification accuracy. No source images or credentials included.",
+  "referenceRendering": {
+    "oldMs": 36066,
+    "newMs": 370,
+    "variants": 36,
+    "note": "New text, same pinned Inter font; instantiated measurement fonts were already cached. No OpenAI calls."
+  },
+  "observedAIComparison": {
+    "totalMs": 1495,
+    "referenceMs": 347,
+    "openaiMs": 1146,
+    "inputTokens": 13073,
+    "referenceCoverage": "36 Inter variants, conventional multi-size sheets",
+    "exactRepeatMs": 3
+  },
+  "observedCompactComparison": {
+    "totalMs": 992,
+    "referenceMs": 316,
+    "openaiMs": 676,
+    "inputTokens": 7520,
+    "referenceCoverage": "All 36 Inter variants at 52 px; two target sheets and two contrasts",
+    "caution": "Reducing tokens preserves sampled variant coverage but does not establish equivalent AI identification quality."
+  },
+  "observedLocalComparison": {
+    "text": "Inter",
+    "shapeSimilarity": 86.1,
+    "margin": -1,
+    "result": "Similar fonts remain ambiguous",
+    "firstMs": 3068,
+    "exactRepeatMs": 3,
+    "conditions": "Corrected transcription and white-letter preprocessing on the supplied orange graphic; shared CPU load during audit."
+  },
+  "latestBrowserVerification": {
+    "automaticOCR": "Inter",
+    "aiProbability": 0.09,
+    "exactAIRepeatMs": 7,
+    "aiRepeatOpenaiMs": 0,
+    "localShapeSimilarity": 86.1,
+    "localMargin": -1,
+    "disagreementVisible": true,
+    "conditions": "Automatic crop from original upload; uncalibrated and ambiguous local identity evidence.",
+    "aiTotalSecondsRounded": 0.7,
+    "referenceMs": 7,
+    "openaiMs": 708
+  },
+  "syntheticBefore": {
+    "cases": 44,
+    "measured": 43,
+    "notChecked": 1,
+    "completionRate": 0.9772727272727273,
+    "strongPositive": 1,
+    "strongFalseMatch": 0,
+    "positiveOtherFitsBetter": 0,
+    "ambiguous": 42
+  },
+  "syntheticAfter": {
+    "cases": 44,
+    "measured": 42,
+    "notChecked": 2,
+    "completionRate": 0.9545454545454546,
+    "strongPositive": 9,
+    "strongFalseMatch": 0,
+    "positiveOtherFitsBetter": 0,
+    "ambiguous": 32
+  },
+  "limits": [
+    "42 of 44 fixtures could be measured; two thin italic cases remain unchecked.",
+    "Nine of 36 Inter fixtures achieved provisional strong status; zero of eight negatives did.",
+    "Real-image audit still exposes high-confidence OCR errors and touching-letter segmentation failures.",
+    "Single observations depend on crop, warm cache state, CPU contention, and upstream latency.",
+    "The original-resolution Glyphs crop took 6.4 seconds locally versus its lower-resolution audit crop taking about 1.3 seconds. Resolution improves measured detail but adds CPU work; results display independently."
+  ],
+  "browserGlyphsCheck": {
+    "aiProbability": 0.6,
+    "elapsedMs": 1197,
+    "inputTokens": 7486,
+    "localCache": {
+      "ageMs": 0,
+      "hit": false,
+      "ttlMs": 600000
+    },
+    "localMargin": 8.5,
+    "localShape": 99.3,
+    "localTimings": {
+      "contrastMs": 2178,
+      "ocrMs": 0,
+      "targetMs": 4239,
+      "totalMs": 6422
+    },
+    "text": "Glyphs",
+    "timings": {
+      "openaiMs": 842,
+      "referenceMs": 355,
+      "totalMs": 1197
+    }
+  },
+  "browserGlyphsRepeat": {
+    "aiCache": {
+      "ageMs": 149032,
+      "hit": true,
+      "ttlMs": 600000
+    },
+    "aiMs": 7,
+    "aiTimings": {
+      "openaiMs": 0,
+      "referenceMs": 6,
+      "totalMs": 7
+    },
+    "localCache": {
+      "ageMs": 149380,
+      "hit": true,
+      "ttlMs": 600000
+    },
+    "localMs": 4
+  },
+  "verification": {
+    "nodeTestsPassed": 26,
+    "pythonTestsPassed": 10,
+    "keylessWebFlow": {
+      "configured": false,
+      "ocrEngine": "Tesseract.js local",
+      "text": "Glyphs",
+      "measurement": "Strong measured similarity",
+      "shapeSimilarity": 99.3,
+      "margin": 8.5
+    },
+    "sameHostHTTPSAllowed": true,
+    "crossOriginRejected": true
+  }
+}

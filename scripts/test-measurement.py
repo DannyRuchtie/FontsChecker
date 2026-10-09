@@ -38,4 +38,21 @@ class MeasurementTests(unittest.TestCase):
   r['ocr']={'lines':[{'text':'Hamburg','confidence':1,'pixels':True,'glyphs':glyphs}]};result=run(r);self.assertEqual(result['status'],'measured',result);self.assertGreater(result['best']['shapeSimilarity'],90)
  def test_wrong_transcription_is_not_checked(self):
   r=self.fixture();r['text']='Hello!';self.assertEqual(run(r)['status'],'not_checked')
+ def test_edge_tolerance_does_not_hide_different_outlines(self):
+  a=Image.new('L',(20,20));ImageDraw.Draw(a).rectangle((3,3,16,16),fill=255)
+  b=a.copy();ImageDraw.Draw(b).rectangle((3,3,3,16),fill=0)
+  exact,_,tolerant=module.score(a,b)
+  self.assertLess(exact,1);self.assertGreater(tolerant,exact)
+ def test_concurrent_instance_builds_are_shared(self):
+  if module._helper.fcntl is None:self.skipTest('Advisory file locking is available on Unix hosts')
+  from tempfile import TemporaryDirectory
+  from concurrent.futures import ThreadPoolExecutor
+  import time
+  saves=[]
+  class StaticFont:
+   def save(self,path):saves.append(path);time.sleep(.05);Path(path).write_bytes(b'font instance')
+  with TemporaryDirectory() as root:
+   source=Path(root)/'source.ttf';source.write_bytes(b'source font');font=StaticFont()
+   with ThreadPoolExecutor(max_workers=4) as pool:files=list(pool.map(lambda _:module.instance_file(root,source,font,{}),range(4)))
+   self.assertEqual(len(saves),1);self.assertEqual(len(set(files)),1);self.assertEqual(files[0].read_bytes(),b'font instance')
 if __name__=='__main__':unittest.main()

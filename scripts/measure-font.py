@@ -4,7 +4,8 @@ from pathlib import Path
 from io import BytesIO
 from PIL import Image,ImageOps,ImageDraw,ImageFont,ImageFilter,ImageChops
 from fontTools.ttLib import TTFont
-from fontTools.varLib.instancer import instantiateVariableFont
+import importlib.util
+_helper_spec=importlib.util.spec_from_file_location('font_instances',Path(__file__).with_name('font-instances.py'));_helper=importlib.util.module_from_spec(_helper_spec);_helper_spec.loader.exec_module(_helper);instance_file=_helper.instance_file
 
 def segments(mask):
  # Projection handles detached dots; touching letters are deliberately rejected.
@@ -19,18 +20,21 @@ def segments(mask):
 def score(a,b):
  w=max(a.width,b.width)+12;h=max(a.height,b.height)+12
  aa=Image.new('L',(w,h));aa.paste(a,((w-a.width)//2,(h-a.height)//2))
- best=0;overlay=None
+ # Count/filter the original once, not nine times for every candidate.
+ n_a=sum(aa.histogram()[128:]);near_a=aa.filter(ImageFilter.MaxFilter(3));n_b=sum(b.histogram()[128:])
+ best=-1;overlay=None;tolerant=0
  for dx in range(-1,2):
   for dy in range(-1,2):
    bb=Image.new('L',(w,h));bb.paste(b,((w-b.width)//2+dx,(h-b.height)//2+dy))
-   near_a=aa.filter(ImageFilter.MaxFilter(3));near_b=bb.filter(ImageFilter.MaxFilter(3))
-   n_a=sum(aa.histogram()[128:]);n_b=sum(bb.histogram()[128:])
-   hits_a=sum(ImageChops.multiply(aa,near_b).histogram()[128:]);hits_b=sum(ImageChops.multiply(bb,near_a).histogram()[128:])
-   value=(hits_a+hits_b)/max(1,n_a+n_b)
+   overlap=sum(ImageChops.multiply(aa,bb).histogram()[128:])
+   value=2*overlap/max(1,n_a+n_b)
    if value>best:
     best=value;overlay=(aa,bb)
- if overlay is None:overlay=(aa,bb)
- return best,overlay
+ # Tolerant overlap is diagnostic only; exact Dice ranks font variants.
+ near_b=overlay[1].filter(ImageFilter.MaxFilter(3))
+ hits_a=sum(ImageChops.multiply(aa,near_b).histogram()[128:]);hits_b=sum(ImageChops.multiply(overlay[1],near_a).histogram()[128:])
+ tolerant=(hits_a+hits_b)/max(1,n_a+n_b)
+ return best,overlay,tolerant
 
 def run(r):
  text=' '.join(''.join(' ' if ord(c)<32 or 127<=ord(c)<=159 or c in '\u200b\ufeff' else c for c in r.get('text','')).split());letters=''.join(text.split())
@@ -44,7 +48,7 @@ def run(r):
  if hi-lo<60:return {'status':'not_checked','reason':'Insufficient text/background contrast.'}
  ocr_lines=(r.get('ocr') or {}).get('lines',[])
  normalized=lambda value:''.join(value.split())
- matches=[line for line in ocr_lines if line.get('confidence',0)>=.4 and len(normalized(line['text']))>=3 and normalized(line['text']) in normalized(text)]
+ matches=[line for line in ocr_lines if line.get('confidence',0)>=.4 and len(normalized(line['text']))>=3 and normalized(line['text']) == normalized(text)]
  selected=max(matches,key=lambda line:len(normalized(line['text']))) if matches else None
  if selected:
   text=selected['text'];letters=normalized(text);glyphs=[g for g in selected['glyphs'] if not g['character'].isspace()]
@@ -68,6 +72,7 @@ def run(r):
    if len(parts)!=len(group):return {'status':'not_checked','reason':'OCR word contains touching or disconnected characters that cannot be separated reliably.'}
    for lft,rgt in parts:
     part=glyph.crop((lft,0,rgt,glyph.height));ink=part.getbbox();target.append(part.crop(ink));runs.append((left+lft,left+rgt))
+
   lineheight=max(v[1] for v in vertical)-min(v[0] for v in vertical)
   mask=Image.new('L',(1,max(1,round(lineheight))))
 
@@ -114,9 +119,7 @@ def run(r):
   for op in optical:
    for weight in weights:
     coords={tag:v[1] for tag,v in axes.items()};coords.update({'wght':weight} if 'wght' in axes else {});coords.update({'opsz':op} if op is not None else {})
-    key=hashlib.sha256(path.read_bytes()+json.dumps(coords,sort_keys=True).encode()).hexdigest()[:24];file=cache/(key+'.ttf')
-    if not file.exists():
-     instance=instantiateVariableFont(f,coords,inplace=False) if axes else f;instance.flavor=None;instance.save(file)
+    file=instance_file(root,path,f,coords)
     font=ImageFont.truetype(str(file),max(24,mask.height*2));box=font.getbbox(text);ref=Image.new('L',(max(1,box[2]-box[0]+4),max(1,box[3]-box[1]+4)));ImageDraw.Draw(ref).text((2-box[0],2-box[1]),text,font=font,fill=255)
     ref=ref.crop(ref.getbbox());factor=mask.height/ref.height;ref=ref.resize((max(1,round(ref.width*factor)),mask.height),Image.Resampling.LANCZOS).point(lambda v:255 if v>127 else 0)
     rr=[];reference_glyphs=[]
@@ -130,11 +133,13 @@ def run(r):
       reference_glyphs.append(tile.crop(bb));left=round(font.getlength(prefix)*factor)+round(cb[0]*factor)+bb[0];rr.append((left,left+tile.width))
      prefix+=c
     if len(reference_glyphs)!=len(target):continue
-    scores=[];overlays=[]
+    scores=[];overlays=[];tolerant_scores=[];pair_cache={}
     for a,b in zip(target,reference_glyphs):
-     value,pair=score(a,b);scores.append(value);overlays.append(pair)
+     key=(a.size,a.tobytes(),b.size,b.tobytes())
+     if key not in pair_cache:pair_cache[key]=score(a,b)
+     value,pair,tolerant=pair_cache[key];scores.append(value);overlays.append(pair);tolerant_scores.append(tolerant)
     spacing=sum(abs((runs[i][0]-runs[i-1][0])-(rr[i][0]-rr[i-1][0])) for i in range(1,len(runs)))/max(1,len(runs)-1)
-    results.append({'weight':weight,'italic':bool(f['head'].macStyle&2) or 'italic' in path.name.lower(),'opticalSize':op,'shapeSimilarity':round(100*sum(scores)/len(scores),1),'minimumLetterSimilarity':round(100*min(scores),1),'spacingMeanDifferencePx':round(spacing,2),'letters':[{'letter':c,'similarity':round(v*100,1)} for c,v in zip(letters,scores)],'_overlays':overlays})
+    results.append({'weight':weight,'italic':bool(f['head'].macStyle&2) or 'italic' in path.name.lower(),'opticalSize':op,'shapeSimilarity':round(100*sum(scores)/len(scores),1),'minimumLetterSimilarity':round(100*min(scores),1),'edgeToleranceSimilarity':round(100*sum(tolerant_scores)/len(tolerant_scores),1),'spacingMeanDifferencePx':round(spacing,2),'letters':[{'letter':c,'similarity':round(v*100,1)} for c,v in zip(letters,scores)],'_overlays':overlays})
  if not results:return {'status':'not_checked','reason':'Candidate characters could not be separated reliably, or the font lacks the transcribed glyphs.'}
  results.sort(key=lambda v:v['shapeSimilarity'],reverse=True);best=results[0];pairs=best['_overlays'];width=sum(a.width+8 for a,b in pairs);height=max(a.height for a,b in pairs);canvas=Image.new('RGB',(width,height),'white');original=Image.new('RGBA',(width,height));reference=Image.new('RGBA',(width,height));x=0
  for a,b in pairs:
@@ -144,7 +149,7 @@ def run(r):
  layers={'original':encoded(original),'reference':encoded(reference)}
  buf=BytesIO();canvas.save(buf,format='PNG')
  for v in results:v.pop('_overlays',None)
- return {'status':'measured','method':'Independent letter alignment, uniform word-height scaling, 1 px edge tolerance, translation ±1 px; no glyph stretching.','text':text,'coverage':len(letters),'segmentation':'OCR positions with ink refinement' if selected else 'projection fallback','best':best,'candidates':results[:5],'layers':layers,'overlay':'data:image/png;base64,'+base64.b64encode(buf.getvalue()).decode(),'notice':'Similarity is not font identity confidence. Spacing is reported separately in crop pixels; leading is not measured. Clean single-line backgrounds only.'}
+ return {'status':'measured','method':'Exact binary Dice overlap with independent letter alignment, uniform word-height scaling and translation ±1 px; tolerant overlap is diagnostic only; no glyph stretching.','text':text,'coverage':len(letters),'segmentation':'OCR positions with ink refinement' if selected else 'projection fallback','best':best,'candidates':results[:5],'layers':layers,'overlay':'data:image/png;base64,'+base64.b64encode(buf.getvalue()).decode(),'notice':'Similarity is not font identity confidence. Spacing is reported separately in crop pixels; leading is not measured. Clean single-line backgrounds only.'}
 if __name__=='__main__':
  try:print(json.dumps(run(json.load(sys.stdin))))
  except Exception:print(json.dumps({'status':'not_checked','reason':'Image segmentation or font rendering failed; no measurement reported.'}))

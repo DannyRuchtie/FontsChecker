@@ -1,229 +1,164 @@
 # Fonts Checker
 
-Drop an image, choose a font, and compare its letterforms against references generated from the actual font files. A local prototype combining measured pixel overlap with OpenAI vision for text reading and the Decisions API for a separate font-match estimate.
+An experimental web tool for checking whether text in an image resembles a selected font. It renders comparison material from the actual font files, measures individual letter shapes, and optionally asks OpenAI for a separate visual estimate.
 
-![Fonts Checker checking an Inter specimen](docs/fonts-checker.png)
+**It checks letterforms, not whether the font’s name appears in the image.** A printed word such as “Inter” supplies shapes to compare; the word itself is never proof of font identity. No model is trained or fine-tuned by this app.
 
-## What you see
+![Fonts Checker image selection and visual estimate](docs/fonts-checker.png)
 
-1. **Select the text:** upload an image and drag a box around one complete line with the crosshair cursor. Enter that exact line, or let OCR locate a line automatically.
-2. **Inspect the layers:** the measurement result shows the original text pixels in blue and the actual font render in orange. Move the opacity slider to see how the aligned letters overlap.
-3. **Read the differences:** the combined overlay marks shared pixels dark, original-only pixels blue, and font-only pixels orange. Shape similarity and spacing difference are separate measurements.
-4. **Compare the model estimate:** OpenAI receives the selected crop and generated font specimens. Its probability is separate from the local similarity score; neither proves font identity.
+*Your supplied screenshot shows an earlier prototype. The current result cards and caching feedback are illustrated below.*
 
-```mermaid
-flowchart LR
-    A[Selected text crop] --> B[Extract foreground pixels]
-    B --> C[Separate and align original letters: blue layer]
-    D[Actual font file and transcription] --> E[Render and uniformly scale font letters: orange layer]
-    C --> F[Stack aligned letter pairs]
-    E --> F
-    F --> G[Inspect layers with opacity slider]
-    F --> H[Measure overlap with edge tolerance]
-    H --> I[Shape similarity and per-letter scores]
-    B --> J[Compare original and rendered letter distances]
-    E --> J
-    J --> K[Separate spacing difference]
-```
+## Use it
 
-The UI also lists these processing steps next to the Analyze button, distinguishing local measurements from the AI estimate.
+1. Choose a font family and upload a PNG, JPEG, or WebP (up to 20 MB).
+2. Drag a box around **one complete physical line**, including its ascenders, descenders, and punctuation. The crosshair cursor indicates selection. Alternatively, Analyze can locate a prominent line automatically.
+3. Check **Text for comparison**. OCR can confidently misread a letter, omit a character, or select a different line. Correct the text to match the box exactly.
+4. Analyze. The verdict starts as a compact spinner. Local measurements and the optional AI estimate run concurrently and appear independently as they finish.
+5. Inspect the references, letter overlays, competing fonts, and individual scores before interpreting a high percentage.
 
-Alignment moves each letter independently and preserves proportions. The layer view therefore explains shape comparison, not the original word spacing. Leading is not measured. If the line cannot be isolated reliably, the tool says **not checked** and offers no similarity score.
+Images cannot be dragged out of the preview. Drawing a new selection clears the previous transcription and results. Manual transcriptions are preserved during analysis, even when measurement fails.
 
-## What it does
-
-- Downloads a selected Google Fonts family, preserving its license and recording source URLs and file hashes. Inter uses the bundled official Inter 4.1 files from [Rasmus Andersson](https://rsms.me/inter/).
-- Generates clean reference sheets across available standard weights, upright/italic styles, sampled optical sizes, and **18, 32, and 52 px** text sizes.
-- Reads and locates a line from your image automatically, highlights its approximate region, then renders the same text in the selected font for comparison. You can correct the transcription and analyze again.
-- Includes comparison specimens from two other families (chosen from Inter, Roboto, and Open Sans) to challenge lookalike matches.
-- Measures clean single-line letter shapes locally against actual font variants, with colored pixel overlays and a separate spacing difference.
-- Shows the estimated probability of a font match, a separate text-readability estimate, actual API token usage, and the reference images used.
-- Caches font files and generated specimens locally so repeated checks reuse them. Committed diagnostic packs for Inter, Roboto, and Open Sans make initial preparation immediate on a fresh checkout.
-
-## Workflow
+## How it works
 
 ```mermaid
 flowchart TD
-    A[Choose target font] --> B{Font cached?}
-    B -->|No| C[Download actual font files and license]
-    B -->|Yes| D[Read local font pack]
-    C --> D
-    D --> E[Inspect font axes, weights, styles and glyph coverage]
-    E --> F[Generate and cache diagnostic specimens at 18, 32 and 52 px]
-    G[Drop image] --> H[Resize locally and encode JPEG]
-    H --> I[Click Analyze]
-    I --> J{Comparison text supplied?}
-    J -->|No| K[Tesseract.js reads text positions; OpenAI fallback if needed]
-    J -->|Yes| K
-    K --> L[Use editable transcription]
-    L --> T[Select nearby weights and styles when estimates are confident]
-    T --> M[Render the same words from actual target font files]
-    D --> M
-    F --> N[Choose generic or matching-text sheets, up to six]
-    M --> N
-    L --> W[Locate and highlight text; crop locally with padding]
-    W --> X[Segment letters and locally align actual font renders]
-    X --> Y[Shape similarity, spacing difference and colored overlay]
-    W --> O[Decisions API]
-    N --> O
-    R[Render known different fonts using the same words] --> O
-    O --> S[Compare target and contrast letterforms]
-    O --> P[Estimate font match and readable text sufficiency]
-    P --> U{Narrowed result inconclusive and readable?}
-    U -->|Yes| V[Retry once with broader cached references]
-    V --> Q[Show result, all token usage and reference previews]
-    U -->|No| Q
+    F[Choose font family] --> P[Load cached font files or download files and license]
+    P --> I[Reuse instantiated weights, styles and optical sizes]
+    U[Upload image] --> V[Resize preview locally]
+    V --> S[Select one complete line or locate it automatically]
+    S --> C[Crop selected region from original upload]
+    C --> O[Tesseract.js reads line and character positions]
+    O --> E[Check and edit the exact transcription]
+    O -->|Low confidence and key configured| R[OpenAI text-reading fallback]
+    R --> E
+    E --> L[Local comparison]
+    E --> A[Optional AI comparison in parallel]
+    I --> L
+    I --> G[Generate matching-text reference sheets once and cache]
+    G --> A
+    L --> LC{Identical measurement cached?}
+    LC -->|Yes| LR[Reuse local result]
+    LC -->|No| M[Isolate foreground and align each letter with font renders]
+    M --> D[Exact overlap and separate edge-tolerant diagnostic]
+    D --> X[Compare two other families and report spacing]
+    X --> LR
+    A --> AC{Identical AI request cached?}
+    AC -->|Yes| AR[Reuse AI verdict without another API request]
+    AC -->|No| Q[One Decisions API comparison with target and contrast references]
+    Q --> AR
+    LR --> UI[Show scores, overlays, timing and any disagreement]
+    AR --> UI
 ```
 
-## Run locally
+### Actual fonts supply the references
 
-Requires **Node.js 22+**, **Python 3.10+**, and optionally an OpenAI API key with access to the Decisions API for the separate AI estimate. Preparing a font without a committed pack needs internet access.
+Inter uses bundled **official Inter 4.1** files from [Rasmus Andersson](https://rsms.me/inter/). Other supported families are downloaded from the [Google Fonts repository](https://github.com/google/fonts), with their license, source information, and file hashes. Proprietary fonts and arbitrary font URLs are not downloaded.
+
+FontTools reads each font’s glyphs and variation axes. Pillow renders available standard weights, upright and italic files, and sampled optical sizes. Inter has **36 variants**: nine weights from 100 to 900, two styles, and optical sizes 14 and 32. Generic diagnostic sheets use 18, 32, and 52 px text. Other variable axes stay at their defaults; every possible axis value or OpenType feature combination is not enumerated.
+
+Matching-text sheets preserve all available weight and style samples. Apparent weight estimates never exclude heavy, thin, or italic candidates. Confident size estimates can select 18/32 or 32/52 px references. Short transcriptions use compact 52 px sheets, with two columns when the complete text fits; wide strings fall back to full-width rows. Long transcriptions use readable prefixes instead of shrinking all glyphs. Transmission is capped at six target sheets plus two contrast sheets, so very large families can have sampled page coverage.
+
+Inter, Roboto, and Open Sans include committed font files, licenses, and generic reference packs. A fresh checkout can use these without downloading or regenerating the generic sheets. These packs are reference material, not a training dataset.
+
+### OCR and selection
+
+**Tesseract.js runs in the Node web backend using WebAssembly.** It needs neither an OpenAI key nor macOS. Sparse-text detection locates prominent lines in a full image; a manually selected line uses single-line OCR. English language data downloads once and is cached. Font rendering supports Unicode glyphs supplied by the font, but OCR language coverage is currently English.
+
+A bright, neutral-letter mask can help recover white text on a colorful background by removing small isolated highlights. This is a limited preprocessing fallback, not general background removal. Local OCR is accepted automatically at 75% OCR confidence. This measures transcription confidence, not font confidence. Low-confidence reading can fall back to OpenAI Responses when a key is configured; otherwise the user must enter the text.
+
+After locating the line, the browser crops from the **original uploaded file**, up to 1,600 px on the crop’s longest edge. This preserves more letter detail than cropping an already downscaled full-page preview. Crops use lossless PNG when they fit the request limit, with high-quality JPEG as a size fallback. Automatic boxes add a small margin; manual selections use exactly the drawn box.
+
+### Local letter-shape measurement
+
+![Individual letter layers, adjustable opacity, and pixel differences](docs/letter-layer-comparison.png)
+
+*Layer visualization from the supplied screenshot. Current ranking uses exact overlap; the earlier score shown here used edge tolerance.*
+
+The local comparison isolates foreground ink, tries clean-line pixel segmentation first, and falls back to OCR character positions with ink refinement. It requires one line up to 120 characters with at least three letters or digits. Punctuation and font-supported Unicode are allowed. Ink height must be at least 16 px.
+
+The renderer creates the same characters from every available font variant. It scales the reference using a shared line-height scale, preserves letter proportions, and translates each letter independently by up to one pixel to find its best alignment. It does not stretch each glyph to make it fit.
+
+**Exact shape overlap** is the mean binary Dice overlap of aligned letter pairs. One-pixel edge-tolerant similarity is reported separately as a diagnostic; it no longer ranks candidates or determines the green status. The previous forgiving score could hide outline differences in Arial and Helvetica samples.
+
+The blue layer is original ink, the orange layer is rendered reference ink, and dark pixels in the difference view are shared. The opacity slider lets you fade between layers. Positions in this view are normalized for shape comparison. Average spacing difference is measured separately in crop pixels; leading is not measured.
+
+Two other families, chosen from Inter, Roboto, and Open Sans, are measured using the same transcription and segmentation path. **Strong measured similarity** currently requires at least 90% exact overlap and a lead of at least three percentage points over both contrasts. Missing contrasts produce an incomplete comparison. Very low overlap is labeled unreliable. These thresholds are provisional; shape overlap is not the probability that the font is correct.
+
+### Optional visual estimate
+
+With an OpenAI key, the Decisions API receives the selected image, literal transcription, actual target-font references, and contrast references. It returns separate estimates for font match and readable-text sufficiency. OCR instructions and printed labels are not identity evidence.
+
+The large AI percentage is shown in green at 80% or higher, red at 20% or lower, and orange between them or when text is insufficient. Intermediate results say “AI leans toward” or “inconclusive.” These are display conventions, not calibrated certainty boundaries. The app never changes the returned probability to match the local score.
+
+![Compact AI verdict beside separate local measurement](docs/analysis-feedback.png)
+
+The example above shows why the results stay separate: 99.3% exact shape overlap and a 60% AI estimate do not represent the same measurement. The UI explicitly explains disagreements or unavailable local evidence. A refusal, failed request, or unreliable local segmentation does not establish a font mismatch. The normal UI makes **one Decisions request**, with no automatic retry. The backend accepts an explicit `retryBroad: true` request for the existing broader-reference retry.
+
+## Caching and speed
+
+| Material | Cache and reuse |
+| --- | --- |
+| Font files and licenses | Disk under `.cache/fonts`; bundled packs seed the cache |
+| Instantiated variable-font variants | Disk, keyed by font bytes and axis coordinates; shared by reference rendering and measurement |
+| Generic references | Committed packs for Inter, Roboto, Open Sans; disk cache for other families |
+| Matching-text references | Disk, keyed by transcription, selection, font bytes, and renderer code |
+| Local OCR positions | Process memory, at most 12 input images/options, including concurrent request reuse |
+| Local measurements | Exact inputs, font files, and measurement code; process memory, 12 entries, 10-minute lifetime, 12 MB limit |
+| AI verdicts | Exact outgoing payload, including image, text, references, model, and prompt; same process-memory bounds |
+
+Concurrent identical comparisons share pending work. Failed AI requests and refusals are not retained. Result caches clear on restart and do not persist uploaded images or verdicts. Matching-text render caches contain the transcription and generated specimens on disk; `.cache` is ignored by Git and should not be published.
+
+Target and contrast font preparation runs concurrently. The two local contrast measurements run concurrently. The visual comparison does not wait for local measurement to finish. The compact verdict keeps reference and API details expandable so local evidence is easier to see alongside it. Stage timing distinguishes reference preparation from the OpenAI wait; cache hits explicitly say no new OpenAI request was made.
+
+Observed on this development machine:
+
+- Rendering a new transcription across 36 Inter variants dropped from **36.1 seconds to 0.37 seconds**, with font instances already cached. First-time font preparation can still take longer. Concurrent cold instance builds share a lock on Unix backend hosts.
+- One live AI comparison took **1.5 seconds**; its identical cached repeat took **3 ms**. A repeated local measurement also took **3 ms**. The higher-resolution Glyphs check took 6.4 seconds locally, then 4 ms on repeat; preserving detail can increase first-pass measurement time. These are backend observations, not latency guarantees or averages.
+- Compact references reduced one short-word request from **13,073 to 7,520 input tokens** while retaining all 36 target variants. Reduced tokens do not prove better identification quality.
+
+See [performance review](eval/performance-review.json). OpenAI network and model latency remain outside the local cache’s control; the [official latency guide](https://developers.openai.com/api/docs/guides/latency-optimization) describes parallel requests and reducing duplicate work.
+
+## Evaluation and limitations
+
+The [local benchmark](eval/local-benchmark.json) contains 36 synthetic Inter variants and eight negatives (Arial, Helvetica, Verdana, Times New Roman). On the current run, 42 of 44 cases were measurable, nine Inter cases reached the provisional strong status, and none of the eight negatives reached it. The earlier run produced one strong Inter result. Two thin italic cases still could not be measured. This small fixture set is not a calibrated accuracy study.
+
+The [audit of nine supplied images](eval/real-images-audit.json) records uncorrected OCR, hashes, and local measurements without OpenAI calls. Three reached strong similarity; two could not be checked. It also exposes confidently wrong OCR such as “hice” and “Januar.” The supplied Inter labels are user observations, not independently verified metadata.
+
+Short words, ligatures, touching italic letters, older font versions, OpenType alternates, low resolution, distorted text, and textured backgrounds remain difficult. A high overlap can occur for lookalikes; a low score can be caused by bad transcription or segmentation. Confirm the selected line, inspect the layers, and compare more distinctive letters. The tool does not verify embedded font metadata, licensing, or every font on a page.
+
+A proper font-identity accuracy claim still needs a larger independently labeled evaluation, more close competitors, OCR error accounting, and threshold calibration. Neither AI percentages nor overlap percentages should be presented as a measured success rate.
+
+## Run locally or host on the web
+
+Requires **Node.js 22+**, **Python 3.10+**, and the renderer dependencies. This is a web app with a Node/Python backend, not static-only hosting. First-time language-data downloads and uncached fonts need internet access. No native macOS component is required.
 
 ```sh
-npm install
+npm ci
 npm run setup:fonts
-cp .env.example .env
-```
-
-Add your key as `OPENAI_API_KEY` in `.env`, then:
-
-```sh
 npm start
 ```
 
-Open [localhost:3000](http://localhost:3000). Select a family such as Inter, Roboto, Open Sans, Montserrat, or Poppins. Font preparation begins after you stop typing. An unavailable family produces an error rather than silently using a substitute font. Proprietary families such as Arial and Helvetica cannot be downloaded through this provider.
+Open [localhost:3000](http://localhost:3000/). Local OCR and letter measurement work without an API key. For the separate visual estimate and fallback text reading, copy `.env.example` to `.env`, add `OPENAI_API_KEY`, and restart the server. The current models are `gpt-6-luna` for Decisions and `gpt-4.1-mini` for fallback text reading. Keep the key on the server; never put it in browser code or commit `.env`.
 
-PNG, JPEG, and WebP uploads up to 20 MB are resized locally to a selected maximum edge length of 768, 1,024, or 1,600 px. Uploads are sent to OpenAI only when you click **Analyze image**. Crop to the text for the best chance of a useful result.
-
-## How the comparison works
-
-Font files come from the official [Google Fonts repository](https://github.com/google/fonts), or bundled official Inter files. FontTools reads the font’s real weight and optical-size axes; Pillow renders specimens from instantiated font data. Static families use the styles actually present in their package. Variable weights are sampled at standard hundreds and axis endpoints; optical sizes use minimum, default, and a display sample where available. Other axes stay at defaults. This samples a family rather than enumerating every possible variation or OpenType feature.
-
-The server generates all supported samples and sends at most six target-font sheets spanning the pack, plus two contrast sheets from different families, to keep requests bounded. Contrast sources are Inter, Roboto, and Open Sans, excluding the selected family. Each row includes multiple text sizes. The result reports whether all reference sheets were reused from cache. Long transcriptions are fitted by using a prefix at each size; missing glyphs cause an explicit error instead of rendering fallback characters. Font source details and exactly which variants were sent are included in the request and returned with the result.
-
-The preview box marks the padded text crop sent as the **target**. Automatic localization is approximate; check that the box includes the intended line. Drag over the preview to select a different region and enter its transcription; manual selections use broad references until a typography profile is available. When no valid region is returned, the full image is used and the result explicitly says so. Editing the transcription clears the box and triggers fresh localization on the next analysis. The first image is always the **target**. Following images are explicitly marked **reference only**. The prompt asks the model to compare shared letterforms and ignore font names printed in the target. That instruction reduces label reliance but does not guarantee the model will ignore labels or distinguish close lookalikes.
-
-Text extraction starts with Tesseract.js in the backend. OpenAI fallback uses `gpt-4.1-mini` via the Responses API (`store: false`). Classification uses `gpt-6-luna` via `POST /v1/decisions`. Tesseract.js has no API charges. OpenAI fallback OCR and classification are separately billed; their token usage is shown separately. An OCR failure leaves manual transcription available. If no readable text is extracted, the checker can use generic diagnostic specimens.
-
-## Adaptive reference selection
-
-When OpenAI fallback reads text, its Responses request also estimates a broad weight class, upright/italic style, apparent size, and certainty. High-certainty estimates select neighboring weights (not a single weight), the likely style, and two nearby text sizes for small or display text. Medium certainty uses wider weight ranges and keeps both styles; low certainty retains full coverage. Optical-size samples remain broad because raster text size does not establish the font’s optical-size axis. Manual transcriptions are preserved while the image is profiled. Tesseract.js returns unknown typography estimates, so its path retains broad variant coverage.
-
-Filtered packs are cached by font, text, and selection. New filtered packs instantiate only the selected variants. Unavailable weight/style combinations fall back to full coverage. If a narrowed comparison returns 20–80% match probability with sufficient readable text, the server retries once with broader references. Both attempts and their total Decisions input tokens are reported. A failed broad retry leaves the first result visible with a notice. No retry runs for unreadable targets, already-broad comparisons, or confident results; confident mistakes remain possible.
-
-This reduces reference volume when the profile is useful, but automatic retries can cost more than one full comparison. A live regular-upright Inter check sent six target variants in three reference images (including contrasts), using 3,967 input tokens versus 16,772 for the broad pass. It was inconclusive and retried, so total Decisions input was 20,739 tokens. This is one example, not a benchmark. Accuracy improvement has not been established; the evaluation below predates adaptive selection.
-
-## Confidence and limitations
-
-Results are **model estimates, not measured accuracy or glyph similarity scores**. A probability of at least 80% is shown as “likely,” at most 20% as “unlikely,” and the middle as “inconclusive.” A low readable-text estimate overrides the headline to indicate insufficient text. These thresholds are provisional and uncalibrated.
-
-Reference generation supplies concrete comparison evidence; it does not train or permanently modify the model. Small text, blur, alternate glyphs, mixed typography, unsupported scripts, and similar fonts can still produce incorrect answers. An image cannot establish font provenance or licensing. More references do not guarantee better recognition.
-
-The latest 44-case synthetic evaluation (9 October 2026) compared names-only decisions against matching-text target specimens plus contrast specimens. At the provisional thresholds, reference-assisted checking confidently identified **12 of 36 Inter cases**, rejected 3 Inter cases, correctly rejected 2 of 8 non-Inter cases, and incorrectly accepted 3 non-Inter cases. Twenty-four cases were inconclusive. The [saved evaluation summary](eval/latest-summary.json) records these counts. The names-only baseline identified 1 Inter case; 11 baseline questions were refused. These results show that references help some positives but **do not establish reliable discrimination of lookalikes**. The dataset is small, synthetic, uses shared text, and has few negative families. The hero screenshot is an example result, not an accuracy claim.
-
-## Development and evaluation
+Set `HOST` and `PORT` for the backend host. Persistent writable `.cache` storage improves warm performance. Deployments must support both runtimes and outbound font, language-data, and optional OpenAI requests.
 
 ```sh
 npm test
+.renderer/bin/python scripts/test-measurement.py
+npm run benchmark:local
+node scripts/audit-real-images.mjs /path/to/supplied-images
+npm run prebuild:fonts -- Inter Roboto "Open Sans"
 ```
 
-Tests cover payload validation, safe font identifiers, reference path handling, generated Inter coverage, and separation of target and reference inputs. Set up the Python renderer before running tests.
+Prebuilding exports **generic diagnostic text only**, with fonts and licenses. It never exports cached user transcriptions. Add selected generic packs to Git when distributing them; generated caches and uploads remain outside the repository.
 
-`scripts/evaluate-font.mjs` compares names-only and generated-reference decisions on the included labeled fixtures:
+## Main files
 
-```sh
-node --env-file-if-exists=.env scripts/evaluate-font.mjs Inter
-```
-
-For Inter this makes 88 separately billed Decisions requests: 36 positive cases and eight negative cases, each tested with and without generated matching-text references. The same Inter fixtures can serve as negative cases for another target family, but add actual positive examples for that family before interpreting its results. Synthetic fixtures use text distinct from the diagnostic references. Add real screenshots and difficult lookalikes to broaden the test; keep comparison references separate from evaluation targets. Results are saved under ignored `eval/results/`.
-
-## Storage and sources
-
-- `.env` stays local and is excluded from Git. The server binds to localhost.
-- `.cache/fonts/` stores downloaded fonts, licenses, source hashes, generated sheets, and transcribed text used to generate them. It is ignored by Git. Uploaded target images are not saved by the app. OpenAI’s data handling still applies to API requests.
-- `.renderer/` contains the local Python environment and is ignored by Git. Dependencies are pinned in `scripts/requirements.txt`.
-- Inter’s bundled font files retain the SIL Open Font License in `references/inter/LICENSE.txt`. Downloaded fonts retain their respective license files.
-
-See [OpenAI Decisions](https://developers.openai.com/api/docs/guides/decisions), [OpenAI image input](https://developers.openai.com/api/docs/guides/images-vision), and [Google Fonts source files](https://github.com/google/fonts).
-
-## Prebuilt packs and caching
-
-`references/packs/` contains font files, licenses, provenance, and generic reference sheets for Inter, Roboto, and Open Sans. A fresh checkout seeds its local cache from these committed packs. Generic generation therefore does not run again for these families. Adding another selected font downloads and renders it once. Matching-text packs are cached by family, transcription, and reference selection; changing the words creates a new pack, while repeated words reuse the existing one. The first new transcription can take tens of seconds to render. Font files are pinned to the cached or committed version; upstream updates do not silently replace them.
-
-To prepare and commit another generic family pack:
-
-```sh
-npm run prebuild:fonts -- Montserrat
-git add references/packs/montserrat
-```
-
-The exporter copies only generic diagnostic references, fonts, licenses, and source metadata. It never exports cached user transcriptions. These remain under ignored `.cache/fonts/`. Regenerate packs deliberately when updating font files or the renderer.
-
-## Local overlay measurement
-
-![Original image letters overlaid with rendered Inter font references](docs/letter-layer-comparison.png)
-
-This example shows the selected text compared with a rendered **Inter 600, optical size 14** candidate. **99.5% shape similarity** is the mean pixel agreement across independently aligned characters, with the configured edge tolerance; **97.8% lowest-letter similarity** shows the weakest individual character. These are similarity measurements, not probabilities or proof of the font or exact weight.
-
-The **opacity slider** fades the orange font render over the blue original pixels, making outline differences visible. The combined overlay below uses dark pixels for overlap, blue for original-only pixels, and orange for reference-only pixels. Letters are repositioned independently in this view, so the visual spacing is normalized.
-
-The **6.11 px average spacing difference** is measured separately from consecutive character left-edge distances in the crop after uniform scaling. It is not a pure kerning score and does not measure leading. Expand **Letter scores and candidate variants** to inspect individual scores and the best sampled variants. This screenshot demonstrates one successful comparison, not a validated accuracy benchmark.
-
-
-Before the model comparison, `/api/measure` runs Pillow and FontTools locally. It isolates foreground pixels on a clean contrasting background, splits letters using vertical pixel projections, and renders the transcription from each available sampled font variant. Instantiated fonts are cached locally by font-file content and axis coordinates; uploaded image pixels and overlays are not written to disk.
-
-Candidate words are scaled uniformly to the target line height. Each letter is aligned independently without stretching its proportions. The score counts foreground pixels with a counterpart within a 1 px edge tolerance, permitting ±1 px translation. The UI shows the best mean shape similarity, lowest letter similarity, five candidate variants, and colored overlays: dark shared pixels, blue original-only pixels, orange reference-only pixels. These are measurement scores, not probabilities of font identity; no pass threshold has been calibrated.
-
-Spacing is measured separately as the mean absolute difference between consecutive letter left-edge distances after uniform scaling, in crop pixels. This includes tracking and word spaces; it is not a pure kerning score. Leading is not measured. Independent shape alignment intentionally removes spacing differences from the shape score.
-
-Invisible OCR control characters are removed before comparison and reference rendering; whitespace is normalized. Empty transcriptions ask for manual text rather than reporting a generic character restriction.
-
-The initial implementation supports one clean line up to 120 characters, including punctuation and font-supported Unicode, with at least three letters/digits, with a minimum line height of 16 px. Touching or disconnected characters, segmentation count mismatches, unsupported glyphs, and low contrast return **not checked**. Projection segmentation does not prove correct OCR correspondence; textures, multiline crops, outlines, shadows, ligatures, and perspective can invalidate a measurement. The existing model estimate remains separate. The edge tolerance can make neighboring weights score almost equally; candidate ranking does not establish exact weight identity. Similar fonts can still score highly, and this layer has not been evaluated for real-world font identification accuracy.
-
-Run its synthetic shape/spacing checks with `.renderer/bin/python scripts/test-measurement.py`. These verify preserved shape scores under added tracking and punctuation/accented text support and rejection of mismatched transcriptions, rather than establishing identification accuracy.
-
-Automatic OCR selects one physical line, including when the supplied transcription spans several lines. Local measurement separates horizontal ink bands and uses a uniquely matching line when possible; ambiguous or clipped regions ask for a manual complete-line selection. Manual selections are cropped exactly without automatic padding. Contrast families lacking the requested glyphs are omitted rather than blocking target-font rendering.
-
-Segmentation tries both light-on-dark and dark-on-light masks and removes exterior background components connected to crop borders, including mixed-polarity text panels. It reports a result only when one candidate line has the expected character count; this remains a heuristic rather than character-level OCR.
-
-Drawing a manual region with an empty text field now runs OCR on that region. If OCR returns no text, analysis stops before local measurement and the Decisions call, asks for transcription, and focuses the text field. This avoids spending classification tokens on a check that cannot produce a local overlay.
-
-Each new manual region clears the previous transcription and result. Analyze then reads that crop automatically unless you enter its exact text first, preventing a previous region’s words from being reused.
-
-If local segmentation fails, the browser makes one additional OCR request on the selected crop to recover a complete physical line, updates the transcription while preserving the selected crop, and retries local measurement once. This recovery adds OCR token cost and may still fail; no measurement score is invented when alignment is unavailable.
-
-An isolated trailing pixel group wider than 1.3 times the line height can be excluded when OCR transcribes one fewer character (for example, a separate arrow icon). This is a heuristic and can misclassify an unusually wide glyph; similarity is not calibrated identity confidence. Background removal starts at crop corners rather than every edge pixel, avoiding removal of ordinary letters near the edges.
-
-The font-match result uses a large confidence percentage: green for AI estimates at least 80%, orange for intermediate estimates or insufficient readable text, and red for estimates at most 20%. These display thresholds are provisional; the percentage is the AI model estimate, not a measured success rate. Local shape similarity remains a separately labeled score and does not trigger the green font-confidence state.
-
-## OCR positions, comparison margins, and benchmark
-
-Tesseract.js runs OCR in the Node web backend using WebAssembly, without an API key or a macOS dependency. Its English language data downloads once and caches under `.cache/ocr`. It returns line and symbol boxes; Pillow refines foreground ink within those boxes. The first text-reading step uses this local OCR; OpenAI is a fallback when configured. The web UI supports local OCR and measurement without a key and skips the separate AI estimate in that mode. The service requires Node.js, Python and the renderer dependencies, so it needs a backend host supporting both runtimes (not static-only hosting).
-
-All candidate characters share one uniform scale derived from the line height. Independent translations are limited to ±1 px and never stretch individual glyphs. Each crop is also measured against two contrast families from Inter, Roboto, and Open Sans. The UI reports the score advantage over the closest measured contrast, marks near ties ambiguous, and reports incomplete comparison when contrasts cannot be measured. A score of at least 90 with a margin of at least 3 points is provisionally labeled “strong measured similarity”; this is not a validated identity threshold. Green AI styling additionally requires this measured support. AI probabilities remain uncalibrated estimates.
-
-Run `npm run benchmark:local` to measure the existing 44-case synthetic set without OpenAI API calls. The saved `eval/local-benchmark.json` reports measurement completion, strong false matches, missed positive comparisons and ambiguity, with every case preserved. This small dataset does not establish real-world accuracy or superiority over Glyphy. Add labeled real-image cases and more close negative families before calibrating thresholds.
-
-For a web host, install dependencies with `npm ci` and `npm run setup:fonts`, then start with `HOST=0.0.0.0 PORT=$PORT npm start` behind your hosting platform’s HTTPS proxy. Keep `.cache` persistent if supported. OpenAI keys stay on the server; omit the key for the local-only workflow. No deployment is performed by committing the source to GitHub.
-
-### Current local benchmark result
-
-The Tesseract.js run on the 44 existing synthetic fixtures measured **43/44 (97.7%)**, leaving one case not checked. With provisional shape ≥90 and a contrast advantage ≥3 points, **1 of 36 Inter cases** received a strong-similarity label; **0 of 8 negative cases** received that label. The other **42 measured cases were ambiguous**. High completion is not high identification accuracy: these results support improved measurement coverage, while font discrimination remains weak. The full per-case output is in [local-benchmark.json](eval/local-benchmark.json). The thresholds were not fitted to a held-out set, and no superiority over Glyphy is established.
-
-Local measurements do not use the OpenAI weight estimate to exclude candidate variants: all available sampled variants remain candidates. OpenAI profiling still narrows its separate reference-image comparison when available. Tesseract.js currently uses English OCR data, so recognition of other scripts is not validated even when the font contains their glyphs.
-
-### Analysis feedback
-
-The verdict appears directly below the image and controls, above the local letter-shape measurements. A compact spinner shows the current stage while OCR, measurement, and the separate AI estimate run. Local results appear as soon as they are ready; the verdict expands smoothly when the AI result arrives, moving the measurements down. Reduced-motion preferences disable the expansion animation. Failed requests and local-only runs replace the spinner with an explicit status.
-
-### Interpreting intermediate AI estimates
-
-An estimate such as 78% is shown as “AI leans toward Inter”, rather than a binary failure at an arbitrary 80% boundary. Color thresholds are display conventions, not validated certainty boundaries. AI estimates and local contrast measurements are reported independently. Local ambiguity does not reduce the returned AI percentage. Manual selections and transcriptions are preserved if local measurement fails. Automatic OCR favors prominent lines over long rows of small labels, but it can still misread characters; check the comparison text. Clean-line pixel segmentation is tried before OCR symbol boxes, which can overlap or clip glyphs.
-
-The visual verdict waits for a fresh OpenAI request even when reference images are cached. An inconclusive narrowed comparison may require a second request with broader references. Reference caching avoids rendering work; it does not eliminate upload or model latency.
-
-### Faster visual verdict
-
-After text selection, local measurement and the AI comparison start concurrently. The UI displays elapsed time while waiting for OpenAI. The normal UI makes one Decisions request; automatic broad-reference retries are disabled. The backend only permits the existing broad retry when `retryBroad: true` is explicitly requested. Reference caching does not cache AI verdicts. This changes latency and reporting, not the model’s returned probability. The earlier local benchmark describes the OCR-first implementation; it has not been rerun for the pixel-first fallback change.
-
-Identical-image OCR results are reused in a bounded, process-memory cache (12 images, including concurrent requests); no uploaded pixels are written to disk by this cache. Restarting clears it. The two local comparison-font measurements run concurrently, and a failed comparison is reported as incomplete. Reference coverage is unchanged. These changes remove duplicate work; actual speed depends on CPU resources and OpenAI response time.
+- `public/app.js`, `public/evidence.js`, `public/style.css`: selection, asynchronous results, evidence feedback, overlays, and loading UI.
+- `server.mjs`: web endpoints, local OCR, and optional OpenAI text-reading fallback.
+- `analyze.mjs`, `decision.mjs`: reference-backed Decisions request, timing, and exact-result caching.
+- `font-library.mjs`, `scripts/render-font.py`, `scripts/font-instances.py`: download, instantiate, render, and reuse actual fonts.
+- `measurement.mjs`, `scripts/measure-font.py`: local letter alignment, exact overlap, contrast measurement, and spacing.
+- `ocr-positions.mjs`, `ocr-selection.mjs`, `scripts/ocr-mask.py`: Tesseract positions, line selection, and bright-letter preprocessing.
+- `result-cache.mjs`: bounded per-process cache with in-flight deduplication.
+- `references/packs`, `eval`: reusable generic font packs and recorded evaluation results.

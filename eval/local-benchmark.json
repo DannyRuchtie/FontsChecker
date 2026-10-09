@@ -1,15 +1,15 @@
 {
-  "evaluatedOn": "2026-10-09T15:33:30.751Z",
-  "method": "Synthetic 44-case existing fixture set; Tesseract.js symbol positions and ink refinement with projection fallback, uniform line-height scale and ±1px translation. Strong similarity uses provisional score>=90 and margin>=3; not calibrated identity confidence.",
+  "evaluatedOn": "2026-10-09T16:26:24.571Z",
+  "method": "Synthetic 44-case existing fixture set; Pixel-first segmentation with single-line OCR fallback; exact Dice ranks variants, tolerant overlap is diagnostic; uniform line-height scale and \u00b11px translation. Strong similarity uses provisional score>=90 and margin>=3; not calibrated identity confidence.",
   "summary": {
     "cases": 44,
-    "measured": 43,
-    "notChecked": 1,
-    "completionRate": 0.9772727272727273,
-    "strongPositive": 1,
+    "measured": 42,
+    "notChecked": 2,
+    "completionRate": 0.9545454545454546,
+    "strongPositive": 9,
     "strongFalseMatch": 0,
     "positiveOtherFitsBetter": 0,
-    "ambiguous": 42
+    "ambiguous": 32
   },
   "results": [
     {
@@ -20,11 +20,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 86.6,
-      "margin": 1,
+      "score": 60.9,
+      "margin": 2.2,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1510
+      "timings": {
+        "ocrMs": 262,
+        "targetMs": 1064,
+        "contrastMs": 260,
+        "totalMs": 1329
+      },
+      "edgeToleranceSimilarity": 82.8,
+      "elapsedMs": 1329
     },
     {
       "file": "inter-200-14-upright.jpg",
@@ -34,11 +41,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 91.5,
-      "margin": 0.8,
+      "score": 84.6,
+      "margin": 8.4,
       "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1406
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 489,
+        "contrastMs": 341,
+        "totalMs": 832
+      },
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 832
     },
     {
       "file": "inter-300-14-upright.jpg",
@@ -48,11 +62,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 92.5,
-      "margin": 0.5,
+      "score": 88.4,
+      "margin": -0.1,
       "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1406
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 510,
+        "contrastMs": 378,
+        "totalMs": 890
+      },
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 890
     },
     {
       "file": "inter-400-14-upright.jpg",
@@ -62,11 +83,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 89,
-      "margin": 0.7,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1393
+      "score": 91.5,
+      "margin": 5.8,
+      "label": "Strong measured similarity",
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 532,
+        "contrastMs": 346,
+        "totalMs": 881
+      },
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 881
     },
     {
       "file": "inter-500-14-upright.jpg",
@@ -76,11 +104,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 90.7,
-      "margin": 0.5,
+      "score": 91.8,
+      "margin": 1.4,
       "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1420
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 511,
+        "contrastMs": 347,
+        "totalMs": 860
+      },
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 860
     },
     {
       "file": "inter-600-14-upright.jpg",
@@ -90,11 +125,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 90.7,
-      "margin": 0.4,
+      "score": 93.9,
+      "margin": 2.7,
       "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1439
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 500,
+        "contrastMs": 343,
+        "totalMs": 845
+      },
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 846
     },
     {
       "file": "inter-700-14-upright.jpg",
@@ -104,11 +146,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 90.7,
-      "margin": 0.7,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1441
+      "score": 95.3,
+      "margin": 3.7,
+      "label": "Strong measured similarity",
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 520,
+        "contrastMs": 343,
+        "totalMs": 865
+      },
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 865
     },
     {
       "file": "inter-800-14-upright.jpg",
@@ -118,11 +167,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 93.8,
-      "margin": 1.1,
+      "score": 95.1,
+      "margin": 2.8,
       "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1474
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 534,
+        "contrastMs": 360,
+        "totalMs": 896
+      },
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 896
     },
     {
       "file": "inter-900-14-upright.jpg",
@@ -132,11 +188,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 93.8,
-      "margin": 1.4,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1472
+      "score": 94.2,
+      "margin": 5.9,
+      "label": "Strong measured similarity",
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 514,
+        "contrastMs": 350,
+        "totalMs": 866
+      },
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 867
     },
     {
       "file": "inter-100-32-upright.jpg",
@@ -146,11 +209,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 100,
-      "margin": 2.2,
+      "score": 83.9,
+      "margin": 20.4,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "projection fallback",
-      "elapsedMs": 2229
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 696,
+        "contrastMs": 440,
+        "totalMs": 1139
+      },
+      "edgeToleranceSimilarity": 99.9,
+      "elapsedMs": 1139
     },
     {
       "file": "inter-200-32-upright.jpg",
@@ -160,11 +230,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 89.9,
-      "margin": 1.4,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2080
+      "score": 90.5,
+      "margin": 10.9,
+      "label": "Strong measured similarity",
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 688,
+        "contrastMs": 437,
+        "totalMs": 1127
+      },
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 1127
     },
     {
       "file": "inter-300-32-upright.jpg",
@@ -174,11 +251,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 85.3,
-      "margin": 1.5,
+      "score": 89.9,
+      "margin": 4.3,
       "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2050
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 715,
+        "contrastMs": 446,
+        "totalMs": 1163
+      },
+      "edgeToleranceSimilarity": 99.7,
+      "elapsedMs": 1163
     },
     {
       "file": "inter-400-32-upright.jpg",
@@ -188,11 +272,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 86.5,
-      "margin": 1.3,
+      "score": 91.3,
+      "margin": 2.3,
       "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2067
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 708,
+        "contrastMs": 440,
+        "totalMs": 1150
+      },
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 1149
     },
     {
       "file": "inter-500-32-upright.jpg",
@@ -202,11 +293,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 91.9,
-      "margin": 0.9,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2060
+      "score": 92.1,
+      "margin": 3.7,
+      "label": "Strong measured similarity",
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 688,
+        "contrastMs": 436,
+        "totalMs": 1126
+      },
+      "edgeToleranceSimilarity": 99.8,
+      "elapsedMs": 1126
     },
     {
       "file": "inter-600-32-upright.jpg",
@@ -216,11 +314,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 92.5,
-      "margin": 0.6,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2076
+      "score": 93.2,
+      "margin": 3.8,
+      "label": "Strong measured similarity",
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 698,
+        "contrastMs": 432,
+        "totalMs": 1132
+      },
+      "edgeToleranceSimilarity": 99.8,
+      "elapsedMs": 1132
     },
     {
       "file": "inter-700-32-upright.jpg",
@@ -230,11 +335,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 92.8,
-      "margin": 1,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2155
+      "score": 94.9,
+      "margin": 3.3,
+      "label": "Strong measured similarity",
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 754,
+        "contrastMs": 443,
+        "totalMs": 1199
+      },
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 1199
     },
     {
       "file": "inter-800-32-upright.jpg",
@@ -244,11 +356,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 93,
-      "margin": 1.1,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2199
+      "score": 95.9,
+      "margin": 3.8,
+      "label": "Strong measured similarity",
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 692,
+        "contrastMs": 442,
+        "totalMs": 1136
+      },
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 1136
     },
     {
       "file": "inter-900-32-upright.jpg",
@@ -258,11 +377,18 @@
       "italic": false,
       "kind": "synthetic",
       "status": "measured",
-      "score": 96.7,
-      "margin": 2.2,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2194
+      "score": 94.7,
+      "margin": 4.9,
+      "label": "Strong measured similarity",
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 712,
+        "contrastMs": 443,
+        "totalMs": 1158
+      },
+      "edgeToleranceSimilarity": 99.6,
+      "elapsedMs": 1158
     },
     {
       "file": "inter-100-14-italic.jpg",
@@ -271,12 +397,13 @@
       "opticalSize": 14,
       "italic": true,
       "kind": "synthetic",
-      "status": "measured",
-      "score": 89.5,
-      "margin": 1.1,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1433
+      "status": "not_checked",
+      "timings": {
+        "ocrMs": 166,
+        "targetMs": 647,
+        "totalMs": 649
+      },
+      "elapsedMs": 649
     },
     {
       "file": "inter-200-14-italic.jpg",
@@ -286,11 +413,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 91.4,
-      "margin": 0.8,
+      "score": 88.5,
+      "margin": 19.1,
       "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1464
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 510,
+        "contrastMs": 351,
+        "totalMs": 862
+      },
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 863
     },
     {
       "file": "inter-300-14-italic.jpg",
@@ -300,11 +434,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 88.5,
-      "margin": 1.3,
+      "score": 75.3,
+      "margin": 11.2,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1517
+      "timings": {
+        "ocrMs": 169,
+        "targetMs": 892,
+        "contrastMs": 258,
+        "totalMs": 1152
+      },
+      "edgeToleranceSimilarity": 85.9,
+      "elapsedMs": 1152
     },
     {
       "file": "inter-400-14-italic.jpg",
@@ -314,11 +455,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 83.8,
-      "margin": 0.6,
+      "score": 69.3,
+      "margin": 6.5,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1504
+      "timings": {
+        "ocrMs": 167,
+        "targetMs": 877,
+        "contrastMs": 261,
+        "totalMs": 1140
+      },
+      "edgeToleranceSimilarity": 83,
+      "elapsedMs": 1140
     },
     {
       "file": "inter-500-14-italic.jpg",
@@ -328,11 +476,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 88.6,
-      "margin": 1.1,
+      "score": 77.3,
+      "margin": 4.9,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1491
+      "timings": {
+        "ocrMs": 162,
+        "targetMs": 874,
+        "contrastMs": 273,
+        "totalMs": 1149
+      },
+      "edgeToleranceSimilarity": 87.4,
+      "elapsedMs": 1149
     },
     {
       "file": "inter-600-14-italic.jpg",
@@ -342,11 +497,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 90.5,
-      "margin": 0.9,
+      "score": 81.5,
+      "margin": 5.1,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1468
+      "timings": {
+        "ocrMs": 169,
+        "targetMs": 919,
+        "contrastMs": 264,
+        "totalMs": 1185
+      },
+      "edgeToleranceSimilarity": 89.4,
+      "elapsedMs": 1185
     },
     {
       "file": "inter-700-14-italic.jpg",
@@ -356,11 +518,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 87.8,
-      "margin": 2,
+      "score": 77.7,
+      "margin": 5.6,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1471
+      "timings": {
+        "ocrMs": 180,
+        "targetMs": 918,
+        "contrastMs": 272,
+        "totalMs": 1192
+      },
+      "edgeToleranceSimilarity": 86,
+      "elapsedMs": 1192
     },
     {
       "file": "inter-800-14-italic.jpg",
@@ -370,11 +539,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 92.4,
-      "margin": 1.2,
+      "score": 84.8,
+      "margin": 4.5,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1504
+      "timings": {
+        "ocrMs": 170,
+        "targetMs": 927,
+        "contrastMs": 275,
+        "totalMs": 1204
+      },
+      "edgeToleranceSimilarity": 91.8,
+      "elapsedMs": 1204
     },
     {
       "file": "inter-900-14-italic.jpg",
@@ -384,11 +560,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 90.3,
-      "margin": 1.6,
+      "score": 83.2,
+      "margin": 7.2,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1554
+      "timings": {
+        "ocrMs": 165,
+        "targetMs": 899,
+        "contrastMs": 273,
+        "totalMs": 1174
+      },
+      "edgeToleranceSimilarity": 89.9,
+      "elapsedMs": 1175
     },
     {
       "file": "inter-100-32-italic.jpg",
@@ -398,7 +581,12 @@
       "italic": true,
       "kind": "synthetic",
       "status": "not_checked",
-      "elapsedMs": 294
+      "timings": {
+        "ocrMs": 170,
+        "targetMs": 649,
+        "totalMs": 651
+      },
+      "elapsedMs": 651
     },
     {
       "file": "inter-200-32-italic.jpg",
@@ -408,11 +596,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 82.1,
-      "margin": 2.9,
+      "score": 72.4,
+      "margin": 13.5,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2106
+      "timings": {
+        "ocrMs": 179,
+        "targetMs": 1119,
+        "contrastMs": 364,
+        "totalMs": 1485
+      },
+      "edgeToleranceSimilarity": 80.8,
+      "elapsedMs": 1485
     },
     {
       "file": "inter-300-32-italic.jpg",
@@ -422,11 +617,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 89.4,
-      "margin": 2.4,
+      "score": 76.9,
+      "margin": 6.3,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2075
+      "timings": {
+        "ocrMs": 165,
+        "targetMs": 1083,
+        "contrastMs": 367,
+        "totalMs": 1452
+      },
+      "edgeToleranceSimilarity": 88.9,
+      "elapsedMs": 1452
     },
     {
       "file": "inter-400-32-italic.jpg",
@@ -436,11 +638,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 87.1,
-      "margin": 1.5,
+      "score": 76.4,
+      "margin": 4.7,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2134
+      "timings": {
+        "ocrMs": 175,
+        "targetMs": 1117,
+        "contrastMs": 371,
+        "totalMs": 1490
+      },
+      "edgeToleranceSimilarity": 86.1,
+      "elapsedMs": 1490
     },
     {
       "file": "inter-500-32-italic.jpg",
@@ -450,11 +659,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 86.8,
-      "margin": 1.8,
+      "score": 78.1,
+      "margin": 6,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2106
+      "timings": {
+        "ocrMs": 180,
+        "targetMs": 1106,
+        "contrastMs": 367,
+        "totalMs": 1475
+      },
+      "edgeToleranceSimilarity": 86.3,
+      "elapsedMs": 1474
     },
     {
       "file": "inter-600-32-italic.jpg",
@@ -464,11 +680,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 87.1,
-      "margin": 2.1,
+      "score": 78.7,
+      "margin": 5.1,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2136
+      "timings": {
+        "ocrMs": 176,
+        "targetMs": 1099,
+        "contrastMs": 365,
+        "totalMs": 1466
+      },
+      "edgeToleranceSimilarity": 85.8,
+      "elapsedMs": 1466
     },
     {
       "file": "inter-700-32-italic.jpg",
@@ -478,11 +701,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 91.5,
-      "margin": 1.5,
+      "score": 84.2,
+      "margin": 4.4,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2126
+      "timings": {
+        "ocrMs": 180,
+        "targetMs": 1109,
+        "contrastMs": 367,
+        "totalMs": 1478
+      },
+      "edgeToleranceSimilarity": 91,
+      "elapsedMs": 1477
     },
     {
       "file": "inter-800-32-italic.jpg",
@@ -492,11 +722,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 91.9,
-      "margin": 2.5,
+      "score": 84.8,
+      "margin": 5.3,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2234
+      "timings": {
+        "ocrMs": 191,
+        "targetMs": 1152,
+        "contrastMs": 383,
+        "totalMs": 1536
+      },
+      "edgeToleranceSimilarity": 91.2,
+      "elapsedMs": 1536
     },
     {
       "file": "inter-900-32-italic.jpg",
@@ -506,11 +743,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 91.9,
-      "margin": 4.1,
-      "label": "Strong measured similarity",
+      "score": 86,
+      "margin": 9.2,
+      "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2192
+      "timings": {
+        "ocrMs": 186,
+        "targetMs": 1107,
+        "contrastMs": 371,
+        "totalMs": 1479
+      },
+      "edgeToleranceSimilarity": 91.8,
+      "elapsedMs": 1479
     },
     {
       "file": "negative-helvetica-29.jpg",
@@ -519,11 +763,18 @@
       "size": 29,
       "kind": "synthetic",
       "status": "measured",
-      "score": 85.5,
-      "margin": 0.7,
+      "score": 86.8,
+      "margin": 2.9,
       "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1426
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 522,
+        "contrastMs": 347,
+        "totalMs": 871
+      },
+      "edgeToleranceSimilarity": 99.9,
+      "elapsedMs": 871
     },
     {
       "file": "negative-helvetica-49.jpg",
@@ -532,11 +783,18 @@
       "size": 49,
       "kind": "synthetic",
       "status": "measured",
-      "score": 87.8,
-      "margin": 1.2,
+      "score": 89.5,
+      "margin": 1.8,
       "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2143
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 723,
+        "contrastMs": 455,
+        "totalMs": 1180
+      },
+      "edgeToleranceSimilarity": 99.4,
+      "elapsedMs": 1179
     },
     {
       "file": "negative-arial-29.jpg",
@@ -545,11 +803,18 @@
       "size": 29,
       "kind": "synthetic",
       "status": "measured",
-      "score": 82.5,
-      "margin": 0.6,
+      "score": 87.3,
+      "margin": 4.3,
       "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1434
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 497,
+        "contrastMs": 343,
+        "totalMs": 841
+      },
+      "edgeToleranceSimilarity": 99.9,
+      "elapsedMs": 841
     },
     {
       "file": "negative-arial-49.jpg",
@@ -558,11 +823,18 @@
       "size": 49,
       "kind": "synthetic",
       "status": "measured",
-      "score": 86.3,
-      "margin": 0.8,
+      "score": 89.7,
+      "margin": 0.7,
       "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2113
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 704,
+        "contrastMs": 448,
+        "totalMs": 1154
+      },
+      "edgeToleranceSimilarity": 99.6,
+      "elapsedMs": 1154
     },
     {
       "file": "negative-verdana-29.jpg",
@@ -571,11 +843,18 @@
       "size": 29,
       "kind": "synthetic",
       "status": "measured",
-      "score": 83.9,
-      "margin": 0.2,
+      "score": 84.1,
+      "margin": 0.8,
       "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1497
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 562,
+        "contrastMs": 355,
+        "totalMs": 918
+      },
+      "edgeToleranceSimilarity": 99.2,
+      "elapsedMs": 918
     },
     {
       "file": "negative-verdana-49.jpg",
@@ -584,11 +863,18 @@
       "size": 49,
       "kind": "synthetic",
       "status": "measured",
-      "score": 93.2,
-      "margin": 0.5,
+      "score": 83.6,
+      "margin": 0.4,
       "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2248
+      "segmentation": "projection fallback",
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 726,
+        "contrastMs": 456,
+        "totalMs": 1184
+      },
+      "edgeToleranceSimilarity": 96.6,
+      "elapsedMs": 1184
     },
     {
       "file": "negative-times-new-roman-29.jpg",
@@ -597,11 +883,18 @@
       "size": 29,
       "kind": "synthetic",
       "status": "measured",
-      "score": 85.3,
-      "margin": -0.7,
-      "label": "Similar fonts remain ambiguous",
+      "score": 59.6,
+      "margin": -1.6,
+      "label": "Measurement unreliable",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 1442
+      "timings": {
+        "ocrMs": 165,
+        "targetMs": 882,
+        "contrastMs": 257,
+        "totalMs": 1141
+      },
+      "edgeToleranceSimilarity": 84.3,
+      "elapsedMs": 1141
     },
     {
       "file": "negative-times-new-roman-49.jpg",
@@ -610,11 +903,18 @@
       "size": 49,
       "kind": "synthetic",
       "status": "measured",
-      "score": 83.2,
-      "margin": 0.4,
+      "score": 64.6,
+      "margin": 0.7,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
-      "elapsedMs": 2044
+      "timings": {
+        "ocrMs": 177,
+        "targetMs": 1154,
+        "contrastMs": 398,
+        "totalMs": 1554
+      },
+      "edgeToleranceSimilarity": 82.3,
+      "elapsedMs": 1555
     }
   ]
 }
