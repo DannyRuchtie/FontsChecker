@@ -160,6 +160,15 @@ The exporter copies only generic diagnostic references, fonts, licenses, and sou
 
 ## Local overlay measurement
 
+![Original image letters overlaid with rendered Inter font references](docs/letter-layer-comparison.png)
+
+This example shows the selected text compared with a rendered **Inter 600, optical size 14** candidate. **99.5% shape similarity** is the mean pixel agreement across independently aligned characters, with the configured edge tolerance; **97.8% lowest-letter similarity** shows the weakest individual character. These are similarity measurements, not probabilities or proof of the font or exact weight.
+
+The **opacity slider** fades the orange font render over the blue original pixels, making outline differences visible. The combined overlay below uses dark pixels for overlap, blue for original-only pixels, and orange for reference-only pixels. Letters are repositioned independently in this view, so the visual spacing is normalized.
+
+The **6.11 px average spacing difference** is measured separately from consecutive character left-edge distances in the crop after uniform scaling. It is not a pure kerning score and does not measure leading. Expand **Letter scores and candidate variants** to inspect individual scores and the best sampled variants. This screenshot demonstrates one successful comparison, not a validated accuracy benchmark.
+
+
 Before the model comparison, `/api/measure` runs Pillow and FontTools locally. It isolates foreground pixels on a clean contrasting background, splits letters using vertical pixel projections, and renders the transcription from each available sampled font variant. Instantiated fonts are cached locally by font-file content and axis coordinates; uploaded image pixels and overlays are not written to disk.
 
 Candidate words are scaled uniformly to the target line height. Each letter is aligned independently without stretching its proportions. The score counts foreground pixels with a counterpart within a 1 px edge tolerance, permitting ±2 px translation. The UI shows the best mean shape similarity, lowest letter similarity, five candidate variants, and colored overlays: dark shared pixels, blue original-only pixels, orange reference-only pixels. These are measurement scores, not probabilities of font identity; no pass threshold has been calibrated.
