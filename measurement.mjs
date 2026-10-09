@@ -4,14 +4,14 @@ import {createHash} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {readPositions} from './ocr-positions.mjs';
 import {resolve} from 'node:path';
-import {prepareFont} from './font-library.mjs';
+import {prepareFont,contrastFamilies} from './font-library.mjs';
 import {validateImage} from './decision.mjs';
 import {createResultCache} from './result-cache.mjs';
 const cache=createResultCache({maxBytes:12000000});
 export async function measureFont(request){
  const started=performance.now();validateImage(request.image);
  if(typeof request.text!=='string'||request.text.length>120)throw Error('Enter up to 120 characters for comparison.');
- const names=[request.font||'Inter',...['Inter','Roboto','Open Sans'].filter(x=>x.toLowerCase()!==(request.font||'Inter').toLowerCase()).slice(0,2)];
+ const names=[request.font||'Inter',...contrastFamilies(request.font||'Inter')];
  const fonts=await Promise.all(names.map(async(name,i)=>{try{return await prepareFont(name);}catch(e){if(i===0)throw e;return {family:name};}}));
  const fingerprint=await Promise.all(fonts.map(async f=>f.directory?Promise.all(f.files.map(x=>readFile(resolve(f.directory,x.file)))):f.family));
  const key=createHash('sha256').update(request.image).update(request.text).update(JSON.stringify(names));
@@ -31,7 +31,7 @@ export async function measureFont(request){
   const contrasts=await Promise.all(fonts.slice(1).map(async font=>{try{const r=await run(font,ocr);return {family:font.family,status:r.status,score:r.best?.shapeSimilarity};}catch{return {family:font.family,status:'not_checked'};}}));
   timings.contrastMs=Math.round(performance.now()-contrastStart);
   const competitor=Math.max(...contrasts.filter(x=>typeof x.score==='number').map(x=>x.score));
-  const margin=contrasts.length===2&&contrasts.every(x=>x.status==='measured')&&Number.isFinite(competitor)?Math.round((target.best.shapeSimilarity-competitor)*10)/10:null;
+  const margin=contrasts.length>=2&&contrasts.every(x=>x.status==='measured')&&Number.isFinite(competitor)?Math.round((target.best.shapeSimilarity-competitor)*10)/10:null;
   return {...target,family:fonts[0].family,contrasts,margin,statusLabel:target.best.shapeSimilarity<60?'Measurement unreliable':margin===null?'Comparison incomplete':margin>=3&&target.best.shapeSimilarity>=90?'Strong measured similarity':margin<=-3?'Another font fits better':'Similar fonts remain ambiguous',calibrated:false,timings};
  });
  return {...cached.value,resultCache:{hit:cached.hit,ageMs:cached.ageMs,ttlMs:600000},timings:{...cached.value.timings,totalMs:Math.round(performance.now()-started)}};

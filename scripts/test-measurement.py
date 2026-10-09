@@ -22,6 +22,15 @@ class MeasurementTests(unittest.TestCase):
  def test_punctuation_and_unicode(self):
   for text in ['Hamburg!', 'Café']:
    result=run(self.fixture(text=text));self.assertEqual(result['status'],'measured',result);self.assertGreater(result['best']['shapeSimilarity'],90)
+ def test_cyrillic_with_overlapping_bounds_and_detached_accents(self):
+  result=run(self.fixture(text='АБВГДЕЁЖЗИЙКЛ'));self.assertEqual(result['status'],'measured',result);self.assertEqual(result['coverage'],13);self.assertGreater(result['best']['shapeSimilarity'],90)
+ def test_components_do_not_cut_by_candidate_font(self):
+  mask=Image.new('L',(45,35));d=ImageDraw.Draw(mask)
+  # Separate shapes with overlapping x bounds, plus two dots over the right body.
+  d.line([(2,7),(24,7),(24,13)],fill=255,width=3);d.rectangle((20,20,37,33),fill=255);d.rectangle((22,12,24,14),fill=255);d.rectangle((32,12,34,14),fill=255)
+  glyphs,runs=module.component_glyphs(mask);self.assertEqual(len(glyphs),2);self.assertLess(runs[1][0],runs[0][1])
+ def test_clipped_ink_is_not_reported_as_a_font_mismatch(self):
+  r=self.fixture();im=Image.open(BytesIO(base64.b64decode(r['image'].split(',')[1]))).convert('L');ink=ImageOps.invert(im);bb=ink.getbbox();im=im.crop((bb[0]+3,bb[1],bb[2],bb[3]));buf=BytesIO();im.save(buf,format='PNG');r['image']='data:image/png;base64,'+base64.b64encode(buf.getvalue()).decode();result=run(r);self.assertEqual(result['status'],'not_checked')
  def test_ocr_control_artifact_is_removed(self):
   r=self.fixture();r['text']='Hamburg\x7f';result=run(r);self.assertEqual(result['status'],'measured');self.assertEqual(result['text'],'Hamburg')
  def test_empty_text_has_actionable_message(self):

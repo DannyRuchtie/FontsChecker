@@ -1,0 +1,161 @@
+{
+  "evaluatedOn": "2026-10-09T17:08:39.054Z",
+  "method": "Local tests on crops from supplied screenshots. Correct transcription entered manually; complete Cyrillic line cropped from original screenshot and resized to 1600 px, clipped Cyrillic captured from UI screenshot, Gothic A1 line from original screenshot. Ground truth provided by user, not embedded metadata. No API calls. Pixels are not published.",
+  "results": [
+    {
+      "case": "cyrillic-complete",
+      "targetFont": "Inter",
+      "text": "АБВГДЕЁЖЗИЙКЛ",
+      "imageSha256": "f0fc666fcdad3413bde3e49e6b528024f876be190eca37e2081c07ee71741bf5",
+      "groundTruth": "Inter, supplied by the user",
+      "baseline": {
+        "status": "not_checked"
+      },
+      "status": "measured",
+      "score": 98,
+      "margin": 6.1,
+      "label": "Strong measured similarity",
+      "segmentation": "connected components with detached marks",
+      "contrasts": [
+        {
+          "family": "Roboto",
+          "status": "measured",
+          "score": 91.9
+        },
+        {
+          "family": "Open Sans",
+          "status": "measured",
+          "score": 79.6
+        },
+        {
+          "family": "Gothic A1",
+          "status": "measured",
+          "score": 81.5
+        }
+      ],
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 5724,
+        "contrastMs": 3040,
+        "totalMs": 8780
+      }
+    },
+    {
+      "case": "cyrillic-clipped",
+      "targetFont": "Inter",
+      "text": "АБВГДЕЁЖЗИЙКЛ",
+      "imageSha256": "0a2a401acc95c33cff0d43566a5985be4bbb4b258ad03ce6480dfbc7a2a29dd2",
+      "groundTruth": "Inter, supplied by the user",
+      "baseline": {
+        "status": "not_checked"
+      },
+      "status": "not_checked",
+      "reason": "Could not isolate one complete line matching the transcription. The box may clip letters, include other lines, or contain touching glyphs. Drag around the complete text line and enter exactly that line.",
+      "timings": {
+        "ocrMs": 268,
+        "targetMs": 661,
+        "totalMs": 671
+      }
+    },
+    {
+      "case": "non-inter",
+      "targetFont": "Inter",
+      "text": "into reality",
+      "imageSha256": "7cc4ab459726a35771b9b9bc6a99db9b977215b59f2cbbafc00adc9ae8590fed",
+      "groundTruth": "Gothic A1, supplied by the user",
+      "baseline": {
+        "status": "measured",
+        "score": 93.1,
+        "margin": 1.4,
+        "label": "Similar fonts remain ambiguous"
+      },
+      "status": "measured",
+      "score": 93.1,
+      "margin": -4.4,
+      "label": "Another font fits better",
+      "segmentation": "projection fallback",
+      "contrasts": [
+        {
+          "family": "Roboto",
+          "status": "measured",
+          "score": 91.4
+        },
+        {
+          "family": "Open Sans",
+          "status": "measured",
+          "score": 91.7
+        },
+        {
+          "family": "Gothic A1",
+          "status": "measured",
+          "score": 97.5
+        }
+      ],
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 743,
+        "contrastMs": 441,
+        "totalMs": 1194
+      }
+    },
+    {
+      "case": "non-inter",
+      "targetFont": "Gothic A1",
+      "text": "into reality",
+      "imageSha256": "7cc4ab459726a35771b9b9bc6a99db9b977215b59f2cbbafc00adc9ae8590fed",
+      "groundTruth": "Gothic A1, supplied by the user",
+      "status": "measured",
+      "score": 97.5,
+      "margin": 4.4,
+      "label": "Strong measured similarity",
+      "segmentation": "projection fallback",
+      "contrasts": [
+        {
+          "family": "Inter",
+          "status": "measured",
+          "score": 93.1
+        },
+        {
+          "family": "Roboto",
+          "status": "measured",
+          "score": 91.4
+        },
+        {
+          "family": "Open Sans",
+          "status": "measured",
+          "score": 91.7
+        }
+      ],
+      "timings": {
+        "ocrMs": 0,
+        "targetMs": 263,
+        "contrastMs": 743,
+        "totalMs": 1016
+      }
+    }
+  ],
+  "liveAI": {
+    "observedAt": "2026-10-09T17:13:04.576Z",
+    "case": "non-inter",
+    "targetFont": "Inter",
+    "status": 200,
+    "answers": [
+      {
+        "type": "predicate",
+        "name": "font_match",
+        "probability": 0.54
+      },
+      {
+        "type": "predicate",
+        "name": "readable_text",
+        "probability": 1
+      }
+    ],
+    "contrasts": [
+      "Roboto",
+      "Open Sans",
+      "Gothic A1"
+    ],
+    "note": "One uncalibrated live estimate with Gothic A1 included, separate from local evidence. No guarantee across retries."
+  }
+}

@@ -1,15 +1,15 @@
 {
-  "evaluatedOn": "2026-10-09T16:26:24.571Z",
-  "method": "Synthetic 44-case existing fixture set; Pixel-first segmentation with single-line OCR fallback; exact Dice ranks variants, tolerant overlap is diagnostic; uniform line-height scale and \u00b11px translation. Strong similarity uses provisional score>=90 and margin>=3; not calibrated identity confidence.",
+  "evaluatedOn": "2026-10-09T17:05:51.382Z",
+  "method": "Synthetic 44-case existing fixture set; column and connected-component segmentation with detached marks, then single-line OCR fallback; exact Dice ranks variants, tolerant overlap is diagnostic; uniform line-height scale and \u00b11px translation. Three contrasts include Gothic A1. Strong similarity uses provisional score>=90 and margin>=3; not calibrated identity confidence.",
   "summary": {
     "cases": 44,
     "measured": 42,
     "notChecked": 2,
     "completionRate": 0.9545454545454546,
-    "strongPositive": 9,
+    "strongPositive": 22,
     "strongFalseMatch": 0,
     "positiveOtherFitsBetter": 0,
-    "ambiguous": 32
+    "ambiguous": 19
   },
   "results": [
     {
@@ -25,13 +25,13 @@
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
       "timings": {
-        "ocrMs": 262,
-        "targetMs": 1064,
-        "contrastMs": 260,
-        "totalMs": 1329
+        "ocrMs": 311,
+        "targetMs": 1250,
+        "contrastMs": 305,
+        "totalMs": 1573
       },
       "edgeToleranceSimilarity": 82.8,
-      "elapsedMs": 1329
+      "elapsedMs": 1574
     },
     {
       "file": "inter-200-14-upright.jpg",
@@ -47,12 +47,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 489,
-        "contrastMs": 341,
-        "totalMs": 832
+        "targetMs": 528,
+        "contrastMs": 366,
+        "totalMs": 903
       },
       "edgeToleranceSimilarity": 100,
-      "elapsedMs": 832
+      "elapsedMs": 903
     },
     {
       "file": "inter-300-14-upright.jpg",
@@ -68,12 +68,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 510,
-        "contrastMs": 378,
-        "totalMs": 890
+        "targetMs": 548,
+        "contrastMs": 365,
+        "totalMs": 923
       },
       "edgeToleranceSimilarity": 100,
-      "elapsedMs": 890
+      "elapsedMs": 922
     },
     {
       "file": "inter-400-14-upright.jpg",
@@ -89,12 +89,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 532,
-        "contrastMs": 346,
-        "totalMs": 881
+        "targetMs": 535,
+        "contrastMs": 378,
+        "totalMs": 922
       },
       "edgeToleranceSimilarity": 100,
-      "elapsedMs": 881
+      "elapsedMs": 922
     },
     {
       "file": "inter-500-14-upright.jpg",
@@ -110,12 +110,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 511,
-        "contrastMs": 347,
-        "totalMs": 860
+        "targetMs": 551,
+        "contrastMs": 379,
+        "totalMs": 940
       },
       "edgeToleranceSimilarity": 100,
-      "elapsedMs": 860
+      "elapsedMs": 940
     },
     {
       "file": "inter-600-14-upright.jpg",
@@ -131,12 +131,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 500,
-        "contrastMs": 343,
-        "totalMs": 845
+        "targetMs": 544,
+        "contrastMs": 367,
+        "totalMs": 920
       },
       "edgeToleranceSimilarity": 100,
-      "elapsedMs": 846
+      "elapsedMs": 921
     },
     {
       "file": "inter-700-14-upright.jpg",
@@ -152,12 +152,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 520,
-        "contrastMs": 343,
-        "totalMs": 865
+        "targetMs": 540,
+        "contrastMs": 382,
+        "totalMs": 932
       },
       "edgeToleranceSimilarity": 100,
-      "elapsedMs": 865
+      "elapsedMs": 931
     },
     {
       "file": "inter-800-14-upright.jpg",
@@ -173,12 +173,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 534,
-        "contrastMs": 360,
-        "totalMs": 896
+        "targetMs": 553,
+        "contrastMs": 368,
+        "totalMs": 930
       },
       "edgeToleranceSimilarity": 100,
-      "elapsedMs": 896
+      "elapsedMs": 930
     },
     {
       "file": "inter-900-14-upright.jpg",
@@ -194,12 +194,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 514,
-        "contrastMs": 350,
-        "totalMs": 866
+        "targetMs": 549,
+        "contrastMs": 378,
+        "totalMs": 937
       },
       "edgeToleranceSimilarity": 100,
-      "elapsedMs": 867
+      "elapsedMs": 938
     },
     {
       "file": "inter-100-32-upright.jpg",
@@ -215,12 +215,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 696,
-        "contrastMs": 440,
-        "totalMs": 1139
+        "targetMs": 749,
+        "contrastMs": 475,
+        "totalMs": 1233
       },
       "edgeToleranceSimilarity": 99.9,
-      "elapsedMs": 1139
+      "elapsedMs": 1233
     },
     {
       "file": "inter-200-32-upright.jpg",
@@ -236,12 +236,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 688,
-        "contrastMs": 437,
-        "totalMs": 1127
+        "targetMs": 750,
+        "contrastMs": 466,
+        "totalMs": 1225
       },
       "edgeToleranceSimilarity": 100,
-      "elapsedMs": 1127
+      "elapsedMs": 1225
     },
     {
       "file": "inter-300-32-upright.jpg",
@@ -257,12 +257,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 715,
-        "contrastMs": 446,
-        "totalMs": 1163
+        "targetMs": 751,
+        "contrastMs": 472,
+        "totalMs": 1232
       },
       "edgeToleranceSimilarity": 99.7,
-      "elapsedMs": 1163
+      "elapsedMs": 1232
     },
     {
       "file": "inter-400-32-upright.jpg",
@@ -278,12 +278,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 708,
-        "contrastMs": 440,
-        "totalMs": 1150
+        "targetMs": 742,
+        "contrastMs": 454,
+        "totalMs": 1205
       },
       "edgeToleranceSimilarity": 100,
-      "elapsedMs": 1149
+      "elapsedMs": 1206
     },
     {
       "file": "inter-500-32-upright.jpg",
@@ -294,17 +294,17 @@
       "kind": "synthetic",
       "status": "measured",
       "score": 92.1,
-      "margin": 3.7,
+      "margin": 3.6,
       "label": "Strong measured similarity",
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 688,
-        "contrastMs": 436,
-        "totalMs": 1126
+        "targetMs": 709,
+        "contrastMs": 513,
+        "totalMs": 1232
       },
       "edgeToleranceSimilarity": 99.8,
-      "elapsedMs": 1126
+      "elapsedMs": 1232
     },
     {
       "file": "inter-600-32-upright.jpg",
@@ -320,12 +320,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 698,
-        "contrastMs": 432,
-        "totalMs": 1132
+        "targetMs": 745,
+        "contrastMs": 477,
+        "totalMs": 1232
       },
       "edgeToleranceSimilarity": 99.8,
-      "elapsedMs": 1132
+      "elapsedMs": 1232
     },
     {
       "file": "inter-700-32-upright.jpg",
@@ -341,12 +341,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 754,
-        "contrastMs": 443,
-        "totalMs": 1199
+        "targetMs": 809,
+        "contrastMs": 476,
+        "totalMs": 1294
       },
       "edgeToleranceSimilarity": 100,
-      "elapsedMs": 1199
+      "elapsedMs": 1295
     },
     {
       "file": "inter-800-32-upright.jpg",
@@ -362,12 +362,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 692,
-        "contrastMs": 442,
-        "totalMs": 1136
+        "targetMs": 812,
+        "contrastMs": 470,
+        "totalMs": 1292
       },
       "edgeToleranceSimilarity": 100,
-      "elapsedMs": 1136
+      "elapsedMs": 1292
     },
     {
       "file": "inter-900-32-upright.jpg",
@@ -383,12 +383,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 712,
-        "contrastMs": 443,
-        "totalMs": 1158
+        "targetMs": 737,
+        "contrastMs": 480,
+        "totalMs": 1226
       },
       "edgeToleranceSimilarity": 99.6,
-      "elapsedMs": 1158
+      "elapsedMs": 1226
     },
     {
       "file": "inter-100-14-italic.jpg",
@@ -399,11 +399,11 @@
       "kind": "synthetic",
       "status": "not_checked",
       "timings": {
-        "ocrMs": 166,
-        "targetMs": 647,
-        "totalMs": 649
+        "ocrMs": 175,
+        "targetMs": 685,
+        "totalMs": 693
       },
-      "elapsedMs": 649
+      "elapsedMs": 693
     },
     {
       "file": "inter-200-14-italic.jpg",
@@ -419,12 +419,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 510,
-        "contrastMs": 351,
-        "totalMs": 862
+        "targetMs": 544,
+        "contrastMs": 382,
+        "totalMs": 935
       },
       "edgeToleranceSimilarity": 100,
-      "elapsedMs": 863
+      "elapsedMs": 935
     },
     {
       "file": "inter-300-14-italic.jpg",
@@ -434,18 +434,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 75.3,
-      "margin": 11.2,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
+      "score": 91.4,
+      "margin": 16.2,
+      "label": "Strong measured similarity",
+      "segmentation": "connected components with detached marks",
       "timings": {
-        "ocrMs": 169,
-        "targetMs": 892,
-        "contrastMs": 258,
-        "totalMs": 1152
+        "ocrMs": 0,
+        "targetMs": 524,
+        "contrastMs": 365,
+        "totalMs": 898
       },
-      "edgeToleranceSimilarity": 85.9,
-      "elapsedMs": 1152
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 897
     },
     {
       "file": "inter-400-14-italic.jpg",
@@ -455,18 +455,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 69.3,
-      "margin": 6.5,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
+      "score": 90.6,
+      "margin": 10.4,
+      "label": "Strong measured similarity",
+      "segmentation": "connected components with detached marks",
       "timings": {
-        "ocrMs": 167,
-        "targetMs": 877,
-        "contrastMs": 261,
-        "totalMs": 1140
+        "ocrMs": 0,
+        "targetMs": 527,
+        "contrastMs": 374,
+        "totalMs": 909
       },
-      "edgeToleranceSimilarity": 83,
-      "elapsedMs": 1140
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 909
     },
     {
       "file": "inter-500-14-italic.jpg",
@@ -476,18 +476,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 77.3,
-      "margin": 4.9,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
+      "score": 91.7,
+      "margin": 4.8,
+      "label": "Strong measured similarity",
+      "segmentation": "connected components with detached marks",
       "timings": {
-        "ocrMs": 162,
-        "targetMs": 874,
-        "contrastMs": 273,
-        "totalMs": 1149
+        "ocrMs": 0,
+        "targetMs": 555,
+        "contrastMs": 370,
+        "totalMs": 934
       },
-      "edgeToleranceSimilarity": 87.4,
-      "elapsedMs": 1149
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 933
     },
     {
       "file": "inter-600-14-italic.jpg",
@@ -497,18 +497,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 81.5,
-      "margin": 5.1,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
+      "score": 94.2,
+      "margin": 6,
+      "label": "Strong measured similarity",
+      "segmentation": "connected components with detached marks",
       "timings": {
-        "ocrMs": 169,
-        "targetMs": 919,
-        "contrastMs": 264,
-        "totalMs": 1185
+        "ocrMs": 0,
+        "targetMs": 614,
+        "contrastMs": 365,
+        "totalMs": 989
       },
-      "edgeToleranceSimilarity": 89.4,
-      "elapsedMs": 1185
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 989
     },
     {
       "file": "inter-700-14-italic.jpg",
@@ -518,18 +518,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 77.7,
-      "margin": 5.6,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
+      "score": 95.7,
+      "margin": 7.8,
+      "label": "Strong measured similarity",
+      "segmentation": "connected components with detached marks",
       "timings": {
-        "ocrMs": 180,
-        "targetMs": 918,
-        "contrastMs": 272,
-        "totalMs": 1192
+        "ocrMs": 0,
+        "targetMs": 565,
+        "contrastMs": 419,
+        "totalMs": 992
       },
-      "edgeToleranceSimilarity": 86,
-      "elapsedMs": 1192
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 992
     },
     {
       "file": "inter-800-14-italic.jpg",
@@ -539,18 +539,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 84.8,
-      "margin": 4.5,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
+      "score": 94.5,
+      "margin": 5.1,
+      "label": "Strong measured similarity",
+      "segmentation": "connected components with detached marks",
       "timings": {
-        "ocrMs": 170,
-        "targetMs": 927,
-        "contrastMs": 275,
-        "totalMs": 1204
+        "ocrMs": 0,
+        "targetMs": 642,
+        "contrastMs": 406,
+        "totalMs": 1058
       },
-      "edgeToleranceSimilarity": 91.8,
-      "elapsedMs": 1204
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 1058
     },
     {
       "file": "inter-900-14-italic.jpg",
@@ -560,18 +560,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 83.2,
-      "margin": 7.2,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
+      "score": 95.3,
+      "margin": 7.4,
+      "label": "Strong measured similarity",
+      "segmentation": "connected components with detached marks",
       "timings": {
-        "ocrMs": 165,
-        "targetMs": 899,
-        "contrastMs": 273,
-        "totalMs": 1174
+        "ocrMs": 0,
+        "targetMs": 569,
+        "contrastMs": 381,
+        "totalMs": 959
       },
-      "edgeToleranceSimilarity": 89.9,
-      "elapsedMs": 1175
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 958
     },
     {
       "file": "inter-100-32-italic.jpg",
@@ -582,11 +582,11 @@
       "kind": "synthetic",
       "status": "not_checked",
       "timings": {
-        "ocrMs": 170,
-        "targetMs": 649,
-        "totalMs": 651
+        "ocrMs": 195,
+        "targetMs": 785,
+        "totalMs": 795
       },
-      "elapsedMs": 651
+      "elapsedMs": 795
     },
     {
       "file": "inter-200-32-italic.jpg",
@@ -601,13 +601,13 @@
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
       "timings": {
-        "ocrMs": 179,
-        "targetMs": 1119,
-        "contrastMs": 364,
-        "totalMs": 1485
+        "ocrMs": 185,
+        "targetMs": 1187,
+        "contrastMs": 389,
+        "totalMs": 1586
       },
       "edgeToleranceSimilarity": 80.8,
-      "elapsedMs": 1485
+      "elapsedMs": 1586
     },
     {
       "file": "inter-300-32-italic.jpg",
@@ -617,18 +617,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 76.9,
-      "margin": 6.3,
+      "score": 88.4,
+      "margin": 6.1,
       "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
+      "segmentation": "connected components with detached marks",
       "timings": {
-        "ocrMs": 165,
-        "targetMs": 1083,
-        "contrastMs": 367,
-        "totalMs": 1452
+        "ocrMs": 0,
+        "targetMs": 787,
+        "contrastMs": 482,
+        "totalMs": 1277
       },
-      "edgeToleranceSimilarity": 88.9,
-      "elapsedMs": 1452
+      "edgeToleranceSimilarity": 99.9,
+      "elapsedMs": 1277
     },
     {
       "file": "inter-400-32-italic.jpg",
@@ -638,18 +638,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 76.4,
-      "margin": 4.7,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
+      "score": 91.1,
+      "margin": 5.4,
+      "label": "Strong measured similarity",
+      "segmentation": "connected components with detached marks",
       "timings": {
-        "ocrMs": 175,
-        "targetMs": 1117,
-        "contrastMs": 371,
-        "totalMs": 1490
+        "ocrMs": 0,
+        "targetMs": 770,
+        "contrastMs": 486,
+        "totalMs": 1264
       },
-      "edgeToleranceSimilarity": 86.1,
-      "elapsedMs": 1490
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 1264
     },
     {
       "file": "inter-500-32-italic.jpg",
@@ -659,18 +659,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 78.1,
-      "margin": 6,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
+      "score": 93.2,
+      "margin": 7.3,
+      "label": "Strong measured similarity",
+      "segmentation": "connected components with detached marks",
       "timings": {
-        "ocrMs": 180,
-        "targetMs": 1106,
-        "contrastMs": 367,
-        "totalMs": 1475
+        "ocrMs": 0,
+        "targetMs": 737,
+        "contrastMs": 476,
+        "totalMs": 1222
       },
-      "edgeToleranceSimilarity": 86.3,
-      "elapsedMs": 1474
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 1221
     },
     {
       "file": "inter-600-32-italic.jpg",
@@ -680,18 +680,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 78.7,
-      "margin": 5.1,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
+      "score": 94.1,
+      "margin": 5.6,
+      "label": "Strong measured similarity",
+      "segmentation": "connected components with detached marks",
       "timings": {
-        "ocrMs": 176,
-        "targetMs": 1099,
-        "contrastMs": 365,
-        "totalMs": 1466
+        "ocrMs": 0,
+        "targetMs": 774,
+        "contrastMs": 525,
+        "totalMs": 1308
       },
-      "edgeToleranceSimilarity": 85.8,
-      "elapsedMs": 1466
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 1308
     },
     {
       "file": "inter-700-32-italic.jpg",
@@ -701,18 +701,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 84.2,
-      "margin": 4.4,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
+      "score": 94.4,
+      "margin": 5.5,
+      "label": "Strong measured similarity",
+      "segmentation": "connected components with detached marks",
       "timings": {
-        "ocrMs": 180,
-        "targetMs": 1109,
-        "contrastMs": 367,
-        "totalMs": 1478
+        "ocrMs": 0,
+        "targetMs": 763,
+        "contrastMs": 477,
+        "totalMs": 1250
       },
-      "edgeToleranceSimilarity": 91,
-      "elapsedMs": 1477
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 1249
     },
     {
       "file": "inter-800-32-italic.jpg",
@@ -722,18 +722,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 84.8,
-      "margin": 5.3,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
+      "score": 94.6,
+      "margin": 5.8,
+      "label": "Strong measured similarity",
+      "segmentation": "connected components with detached marks",
       "timings": {
-        "ocrMs": 191,
-        "targetMs": 1152,
-        "contrastMs": 383,
-        "totalMs": 1536
+        "ocrMs": 0,
+        "targetMs": 783,
+        "contrastMs": 479,
+        "totalMs": 1272
       },
-      "edgeToleranceSimilarity": 91.2,
-      "elapsedMs": 1536
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 1272
     },
     {
       "file": "inter-900-32-italic.jpg",
@@ -743,18 +743,18 @@
       "italic": true,
       "kind": "synthetic",
       "status": "measured",
-      "score": 86,
-      "margin": 9.2,
-      "label": "Similar fonts remain ambiguous",
-      "segmentation": "OCR positions with ink refinement",
+      "score": 94.9,
+      "margin": 9.4,
+      "label": "Strong measured similarity",
+      "segmentation": "connected components with detached marks",
       "timings": {
-        "ocrMs": 186,
-        "targetMs": 1107,
-        "contrastMs": 371,
-        "totalMs": 1479
+        "ocrMs": 0,
+        "targetMs": 782,
+        "contrastMs": 494,
+        "totalMs": 1284
       },
-      "edgeToleranceSimilarity": 91.8,
-      "elapsedMs": 1479
+      "edgeToleranceSimilarity": 100,
+      "elapsedMs": 1284
     },
     {
       "file": "negative-helvetica-29.jpg",
@@ -769,12 +769,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 522,
-        "contrastMs": 347,
-        "totalMs": 871
+        "targetMs": 537,
+        "contrastMs": 363,
+        "totalMs": 910
       },
       "edgeToleranceSimilarity": 99.9,
-      "elapsedMs": 871
+      "elapsedMs": 910
     },
     {
       "file": "negative-helvetica-49.jpg",
@@ -789,12 +789,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 723,
-        "contrastMs": 455,
-        "totalMs": 1180
+        "targetMs": 790,
+        "contrastMs": 493,
+        "totalMs": 1292
       },
       "edgeToleranceSimilarity": 99.4,
-      "elapsedMs": 1179
+      "elapsedMs": 1292
     },
     {
       "file": "negative-arial-29.jpg",
@@ -804,17 +804,17 @@
       "kind": "synthetic",
       "status": "measured",
       "score": 87.3,
-      "margin": 4.3,
+      "margin": 3.6,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 497,
-        "contrastMs": 343,
-        "totalMs": 841
+        "targetMs": 605,
+        "contrastMs": 360,
+        "totalMs": 975
       },
       "edgeToleranceSimilarity": 99.9,
-      "elapsedMs": 841
+      "elapsedMs": 975
     },
     {
       "file": "negative-arial-49.jpg",
@@ -829,12 +829,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 704,
-        "contrastMs": 448,
-        "totalMs": 1154
+        "targetMs": 747,
+        "contrastMs": 473,
+        "totalMs": 1229
       },
       "edgeToleranceSimilarity": 99.6,
-      "elapsedMs": 1154
+      "elapsedMs": 1229
     },
     {
       "file": "negative-verdana-29.jpg",
@@ -844,17 +844,17 @@
       "kind": "synthetic",
       "status": "measured",
       "score": 84.1,
-      "margin": 0.8,
+      "margin": -0.1,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 562,
-        "contrastMs": 355,
-        "totalMs": 918
+        "targetMs": 546,
+        "contrastMs": 376,
+        "totalMs": 932
       },
       "edgeToleranceSimilarity": 99.2,
-      "elapsedMs": 918
+      "elapsedMs": 932
     },
     {
       "file": "negative-verdana-49.jpg",
@@ -869,12 +869,12 @@
       "segmentation": "projection fallback",
       "timings": {
         "ocrMs": 0,
-        "targetMs": 726,
-        "contrastMs": 456,
-        "totalMs": 1184
+        "targetMs": 772,
+        "contrastMs": 536,
+        "totalMs": 1317
       },
       "edgeToleranceSimilarity": 96.6,
-      "elapsedMs": 1184
+      "elapsedMs": 1317
     },
     {
       "file": "negative-times-new-roman-29.jpg",
@@ -888,13 +888,13 @@
       "label": "Measurement unreliable",
       "segmentation": "OCR positions with ink refinement",
       "timings": {
-        "ocrMs": 165,
-        "targetMs": 882,
-        "contrastMs": 257,
-        "totalMs": 1141
+        "ocrMs": 168,
+        "targetMs": 907,
+        "contrastMs": 269,
+        "totalMs": 1188
       },
       "edgeToleranceSimilarity": 84.3,
-      "elapsedMs": 1141
+      "elapsedMs": 1188
     },
     {
       "file": "negative-times-new-roman-49.jpg",
@@ -904,17 +904,17 @@
       "kind": "synthetic",
       "status": "measured",
       "score": 64.6,
-      "margin": 0.7,
+      "margin": -0.2,
       "label": "Similar fonts remain ambiguous",
       "segmentation": "OCR positions with ink refinement",
       "timings": {
-        "ocrMs": 177,
-        "targetMs": 1154,
-        "contrastMs": 398,
-        "totalMs": 1554
+        "ocrMs": 174,
+        "targetMs": 1163,
+        "contrastMs": 378,
+        "totalMs": 1550
       },
       "edgeToleranceSimilarity": 82.3,
-      "elapsedMs": 1555
+      "elapsedMs": 1550
     }
   ]
 }

@@ -17,6 +17,40 @@ def segments(mask):
    end=x if not ink else x+1;runs.append((start,end));start=None
  return runs
 
+def component_glyphs(mask):
+ # Pixel connectivity can separate letters whose x ranges overlap (e.g. ГД).
+ # No candidate font or transcription is used to choose these boundaries.
+ width,height=mask.size;pixels=bytearray(mask.tobytes());parts=[]
+ for seed,value in enumerate(pixels):
+  if not value:continue
+  pixels[seed]=0;stack=[seed];points=[];left=width;top=height;right=bottom=0
+  while stack:
+   index=stack.pop();points.append(index);x=index%width;y=index//width
+   left=min(left,x);top=min(top,y);right=max(right,x+1);bottom=max(bottom,y+1)
+   for yy in range(max(0,y-1),min(height,y+2)):
+    for xx in range(max(0,x-1),min(width,x+2)):
+     neighbor=yy*width+xx
+     if pixels[neighbor]:pixels[neighbor]=0;stack.append(neighbor)
+  parts.append({'box':(left,top,right,bottom),'points':points})
+ groups=[]
+ for part in sorted(parts,key=lambda p:len(p['points']),reverse=True):
+  l,t,r,b=part['box'];choices=[]
+  for group in groups:
+   gl,gt,gr,gb=group['body'];overlap=max(0,min(r,gr)-max(l,gl));gap=max(gt-b,t-gb,0)
+   # Only attach a small, vertically detached mark to an overlapping body.
+   # Keep neighbouring bodies separate even when their bounding boxes overlap.
+   if (b<=gt or t>=gb) and len(part['points'])<=len(group['points'])*.4 and overlap>=min(r-l,gr-gl)*.5 and gap<=max(b-t,gb-gt)*.6:
+    choices.append((overlap/min(r-l,gr-gl),-gap,group))
+  if choices:
+   group=max(choices,key=lambda choice:choice[:2])[2];gl,gt,gr,gb=group['box'];group['box']=(min(l,gl),min(t,gt),max(r,gr),max(b,gb));group['points'].extend(part['points'])
+  else:part['body']=part['box'];groups.append(part)
+ glyphs=[];runs=[]
+ for group in sorted(groups,key=lambda p:(p['box'][0]+p['box'][2])/2):
+  l,t,r,b=group['box'];tile=bytearray((r-l)*(b-t))
+  for index in group['points']:tile[(index//width-t)*(r-l)+index%width-l]=255
+  glyphs.append(Image.frombytes('L',(r-l,b-t),bytes(tile)));runs.append((l,r))
+ return glyphs,runs
+
 def score(a,b):
  w=max(a.width,b.width)+12;h=max(a.height,b.height)+12
  aa=Image.new('L',(w,h));aa.paste(a,((w-a.width)//2,(h-a.height)//2))
@@ -86,6 +120,7 @@ def run(r):
     if mask.getpixel((x,y)):ImageDraw.floodfill(mask,(x,y),0)
    bbox=mask.getbbox()
    if not bbox:continue
+   clipped=bbox[0]==0 or bbox[1]==0 or bbox[2]==mask.width or bbox[3]==mask.height
    mask=mask.crop(bbox)
    bands=segments(mask.transpose(Image.Transpose.TRANSPOSE));merged=[]
    for top,bottom in bands:
@@ -100,13 +135,17 @@ def run(r):
     # A wide isolated trailing icon (such as an arrow) is not a letter.
     if len(runs)==len(letters)+1 and runs[-1][1]-runs[-1][0]>line.height*1.3:
      line=line.crop((0,0,runs[-2][1],line.height));runs=segments(line)
+    method='projection fallback';glyphs=None
+    if len(runs)!=len(letters):
+     glyphs,runs=component_glyphs(line);method='connected components with detached marks'
     if len(runs)==len(letters) and line.height>=16:
-     if not any(line.size==v.size and line.tobytes()==v.tobytes() for v in options):options.append(line)
+     if not any(line.size==v[0].size and line.tobytes()==v[0].tobytes() for v in options):options.append((line,glyphs,runs,method,clipped))
   if len(options)!=1:return {'status':'not_checked','reason':'Could not isolate one complete line matching the transcription. The box may clip letters, include other lines, or contain touching glyphs. Drag around the complete text line and enter exactly that line.'}
-  mask=options[0];runs=segments(mask)
+  mask,target,runs,segmentation,clipped=options[0]
+  if clipped:return {'status':'not_checked','reason':'Text ink reaches the edge of this crop. Draw a slightly larger box including complete letters, accents and descenders.'}
   if len(runs)!=len(letters):return {'status':'not_checked','reason':f'Could not separate the {len(letters)} transcribed characters reliably ({len(runs)} pixel groups). The crop may clip letters, include neighboring text, or contain touching glyphs. Drag around one complete line and make its transcription match exactly.'}
   if mask.height<16:return {'status':'not_checked','reason':'Letters are too small to measure (minimum 16 px line height).'}
-  target=[mask.crop((a,0,b,mask.height)).crop(mask.crop((a,0,b,mask.height)).getbbox()) for a,b in runs]
+  if target is None:target=[mask.crop((a,0,b,mask.height)).crop(mask.crop((a,0,b,mask.height)).getbbox()) for a,b in runs]
  if mask.height<16:return {'status':'not_checked','reason':'Selected line is too small for reliable measurement (minimum 16 px ink height).'}
  root=Path(r['directory']);cache=root/'measurement-fonts';cache.mkdir(exist_ok=True);results=[]
  for path in sorted(root.iterdir()):
@@ -149,7 +188,7 @@ def run(r):
  layers={'original':encoded(original),'reference':encoded(reference)}
  buf=BytesIO();canvas.save(buf,format='PNG')
  for v in results:v.pop('_overlays',None)
- return {'status':'measured','method':'Exact binary Dice overlap with independent letter alignment, uniform word-height scaling and translation ±1 px; tolerant overlap is diagnostic only; no glyph stretching.','text':text,'coverage':len(letters),'segmentation':'OCR positions with ink refinement' if selected else 'projection fallback','best':best,'candidates':results[:5],'layers':layers,'overlay':'data:image/png;base64,'+base64.b64encode(buf.getvalue()).decode(),'notice':'Similarity is not font identity confidence. Spacing is reported separately in crop pixels; leading is not measured. Clean single-line backgrounds only.'}
+ return {'status':'measured','method':'Exact binary Dice overlap with independent letter alignment, uniform word-height scaling and translation ±1 px; tolerant overlap is diagnostic only; no glyph stretching.','text':text,'coverage':len(letters),'segmentation':'OCR positions with ink refinement' if selected else segmentation,'best':best,'candidates':results[:5],'layers':layers,'overlay':'data:image/png;base64,'+base64.b64encode(buf.getvalue()).decode(),'notice':'Similarity is not font identity confidence. Spacing is reported separately in crop pixels; leading is not measured. Clean single-line backgrounds only.'}
 if __name__=='__main__':
  try:print(json.dumps(run(json.load(sys.stdin))))
  except Exception:print(json.dumps({'status':'not_checked','reason':'Image segmentation or font rendering failed; no measurement reported.'}))

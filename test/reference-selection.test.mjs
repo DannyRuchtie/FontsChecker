@@ -8,7 +8,7 @@ test('reference packs retain every family variant and reuse cache',async()=>{
  const {attachFontReferences}=await import('../font-library.mjs');const {buildDecision}=await import('../decision.mjs');
  const selection=selectReferences({certainty:'high',weight:'regular',style:'upright',size:'body'});
  const {reference}=await attachFontReferences(buildDecision({image:'data:image/jpeg;base64,aGVsbG8=',font:'Inter',text:'Quiet mornings, bright ideas.'}),'Inter','Quiet mornings, bright ideas.',selection);
- assert.equal(reference.variantCount,36);assert.equal(reference.images,6);assert.deepEqual(reference.selection,selection);
+ assert.equal(reference.variantCount,36);assert.equal(reference.images,7);assert.deepEqual(reference.contrasts.map(x=>x.family),['Roboto','Open Sans','Gothic A1']);assert.deepEqual(reference.selection,selection);
  const repeated=await attachFontReferences(buildDecision({image:'data:image/jpeg;base64,aGVsbG8=',font:'Inter',text:'Quiet mornings, bright ideas.'}),'Inter','Quiet mornings, bright ideas.',selection);assert.ok(repeated.reference.cacheHit);
 });
 test('compact short-text sheets preserve variants and wide strings keep full-width rows',async()=>{

@@ -4,6 +4,7 @@ import {execFile} from 'node:child_process';
 import {resolve} from 'node:path';
 const root=resolve('.cache/fonts'),inflight=new Map(),rendering=new Map();
 export function fontId(name){if(typeof name!=='string'||!name.trim()||name.length>100||!/^[\p{L}\p{N} ._-]+$/u.test(name))throw Error('Enter a plain font-family name.');return name.toLowerCase().replace(/[^a-z0-9]/g,'');}
+export function contrastFamilies(name){const id=fontId(name);return ['Inter','Roboto','Open Sans','Gothic A1'].filter(family=>fontId(family)!==id).slice(0,3);}
 async function download(url){const r=await fetch(url,{signal:AbortSignal.timeout(30000)});if(!r.ok)throw Error(`Font download failed (${r.status}).`);const buffer=Buffer.from(await r.arrayBuffer());if(buffer.length>15_000_000)throw Error('Font file is too large.');return buffer;}
 async function render(directory,text,selection=null){
  const key=directory+':'+text+JSON.stringify(selection);if(rendering.has(key))return rendering.get(key);const task=renderOnce(directory,text,selection);rendering.set(key,task);try{return await task;}finally{rendering.delete(key);}
@@ -43,7 +44,7 @@ export async function attachFontReferences(payload,font,text='',selection=null){
  const atlases=pack.atlases.length<=6?pack.atlases:Array.from({length:6},(_,i)=>pack.atlases[Math.round(i*(pack.atlases.length-1)/5)]);
  const parts=payload.input[0].content;parts[0].text+=` The first image is the TARGET. The next ${atlases.length} images are REFERENCE ONLY, rendered from actual ${JSON.stringify(prepared.family)} font files. Never treat reference text as target evidence. They include available weights, upright/italic and optical-size samples at ${pack.sizes.join(", ")} pixels. Other axes remain at defaults. Compare shared glyphs across multiple characters; if references are insufficient or a lookalike cannot be distinguished, remain uncertain.`;
  parts.push({type:'input_text',text:'REFERENCE ONLY. Variant labels and font source metadata: '+JSON.stringify(atlases.map(x=>x.variants))},...await Promise.all(atlases.map(async x=>({type:'input_image',image_url:'data:image/jpeg;base64,'+(await readFile(resolve(prepared.directory,x.file))).toString('base64')}))));
- const contrastParts=await Promise.all(['Inter','Roboto','Open Sans'].filter(name=>fontId(name)!==prepared.id).slice(0,2).map(async name=>{
+ const contrastParts=await Promise.all(contrastFamilies(font).map(async name=>{
   const other=await prepareFont(name);let otherPack;try{otherPack=text||selection?await render(other.directory,text,selection):other.pack;}catch(e){if(e.message.includes('does not support'))return null;throw e;}
   if(!otherPack.variantCount)otherPack=text?await render(other.directory,text):other.pack;
   const sheet=otherPack.atlases.find(x=>x.variants.some(v=>!v.italic&&v.weight===400))||otherPack.atlases[0];

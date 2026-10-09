@@ -1,0 +1,62 @@
+{
+  "family": "Gothic A1",
+  "source": "https://github.com/google/fonts/tree/main/ofl/gothica1",
+  "files": [
+    {
+      "file": "GothicA1-Black.ttf",
+      "sha256": "6398ff5c6923c74cb453390892dcb982ec0a6c43b35da8590a8f32702d8c079d",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/gothica1/GothicA1-Black.ttf",
+      "gitBlob": "0b40efc3639b27819baa80eb897d8d0df756e16a"
+    },
+    {
+      "file": "GothicA1-Bold.ttf",
+      "sha256": "2e883fa0ae548000996258b4101f2bb732a28b197264f49621a2cb16d6e9f126",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/gothica1/GothicA1-Bold.ttf",
+      "gitBlob": "2513d58d80eae549ed176e0dfa9718e5e9899713"
+    },
+    {
+      "file": "GothicA1-ExtraBold.ttf",
+      "sha256": "37a65353a646fea5a1ac90585d1bb8f9b997ecae0b79c4f1f187566f910e3f9d",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/gothica1/GothicA1-ExtraBold.ttf",
+      "gitBlob": "9a3e9394466fa002a334d53bd29a995769f1b121"
+    },
+    {
+      "file": "GothicA1-ExtraLight.ttf",
+      "sha256": "3de01e7b6bc0fdd494fa4de0677e67a73a6ae907537bb4c5f355d9c966e2ebfd",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/gothica1/GothicA1-ExtraLight.ttf",
+      "gitBlob": "d6379329ac0adf7939fd51e24b81e5cb473c24d6"
+    },
+    {
+      "file": "GothicA1-Light.ttf",
+      "sha256": "927826b1e23366327ebe53d4675a87938ee90b77104cb794087b5138588b53f4",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/gothica1/GothicA1-Light.ttf",
+      "gitBlob": "0f950e30755ef429fe870eeb1bd71400db800823"
+    },
+    {
+      "file": "GothicA1-Medium.ttf",
+      "sha256": "c8a0eb56fa6b13448688fed0799d503fe536a8c6b7acfafdfd580edb9c4c2192",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/gothica1/GothicA1-Medium.ttf",
+      "gitBlob": "0b3719130f3ec47889a0527747726970992d8a3d"
+    },
+    {
+      "file": "GothicA1-Regular.ttf",
+      "sha256": "211151bea98098c579610ab1114bb1bfe909057207db561f357b896d076c21ac",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/gothica1/GothicA1-Regular.ttf",
+      "gitBlob": "f35bc30260e15fc76c97c79fbbc40d86b452c9f2"
+    },
+    {
+      "file": "GothicA1-SemiBold.ttf",
+      "sha256": "7ee3063f2d626936d8a59dfa21525e7ed19b4e89e8fbb0ea5a924cad9b0cc1f4",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/gothica1/GothicA1-SemiBold.ttf",
+      "gitBlob": "1f943221d9fa845191bbd14a2fdd45ca6924200c"
+    },
+    {
+      "file": "GothicA1-Thin.ttf",
+      "sha256": "2caee77c0db6afe1cd759c547537361ce66945e7d6fef0f14a9a35fbb4581bb6",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/gothica1/GothicA1-Thin.ttf",
+      "gitBlob": "fa7084ac287434de08b415f335149b8190d5310d"
+    }
+  ],
+  "license": "OFL.txt",
+  "downloadedAt": "2026-10-09T14:56:34.152Z"
+}

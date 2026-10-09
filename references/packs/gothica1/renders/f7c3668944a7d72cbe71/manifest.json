@@ -1,0 +1,80 @@
+{
+  "atlases": [
+    {
+      "file": "renders/f7c3668944a7d72cbe71/atlas-0.jpg",
+      "variants": [
+        {
+          "weight": 900,
+          "italic": false,
+          "opticalSize": null,
+          "sourceFile": "GothicA1-Black.ttf",
+          "axes": {}
+        },
+        {
+          "weight": 700,
+          "italic": false,
+          "opticalSize": null,
+          "sourceFile": "GothicA1-Bold.ttf",
+          "axes": {}
+        },
+        {
+          "weight": 800,
+          "italic": false,
+          "opticalSize": null,
+          "sourceFile": "GothicA1-ExtraBold.ttf",
+          "axes": {}
+        },
+        {
+          "weight": 275,
+          "italic": false,
+          "opticalSize": null,
+          "sourceFile": "GothicA1-ExtraLight.ttf",
+          "axes": {}
+        },
+        {
+          "weight": 300,
+          "italic": false,
+          "opticalSize": null,
+          "sourceFile": "GothicA1-Light.ttf",
+          "axes": {}
+        },
+        {
+          "weight": 500,
+          "italic": false,
+          "opticalSize": null,
+          "sourceFile": "GothicA1-Medium.ttf",
+          "axes": {}
+        },
+        {
+          "weight": 400,
+          "italic": false,
+          "opticalSize": null,
+          "sourceFile": "GothicA1-Regular.ttf",
+          "axes": {}
+        },
+        {
+          "weight": 600,
+          "italic": false,
+          "opticalSize": null,
+          "sourceFile": "GothicA1-SemiBold.ttf",
+          "axes": {}
+        },
+        {
+          "weight": 250,
+          "italic": false,
+          "opticalSize": null,
+          "sourceFile": "GothicA1-Thin.ttf",
+          "axes": {}
+        }
+      ]
+    }
+  ],
+  "variantCount": 9,
+  "sizes": [
+    18,
+    32,
+    52
+  ],
+  "text": "Ag a g e R G Q I l 1 0 O @ & 0123456789",
+  "defaultAxesOnly": true
+}

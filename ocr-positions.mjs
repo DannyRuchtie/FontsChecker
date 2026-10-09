@@ -5,7 +5,7 @@ import {mkdir} from 'node:fs/promises';
 import {resolve} from 'node:path';
 let workerPromise,queue=Promise.resolve();
 const results=new Map();
-async function worker(){if(!workerPromise)workerPromise=(async()=>{await mkdir(resolve('.cache/ocr'),{recursive:true});return createWorker('eng',1,{cachePath:resolve('.cache/ocr')});})();return workerPromise;}
+async function worker(){if(!workerPromise){const task=(async()=>{await mkdir(resolve('.cache/ocr'),{recursive:true});return createWorker('eng',1,{cachePath:resolve('.cache/ocr')});})();workerPromise=task;task.catch(()=>{if(workerPromise===task)workerPromise=null;});}return workerPromise;}
 function recognizePositions(image,{singleLine=false,block=false}={}){
  const task=queue.then(async()=>{const w=await worker();await w.setParameters({tessedit_pageseg_mode:singleLine?PSM.SINGLE_LINE:block?PSM.SINGLE_BLOCK:PSM.SPARSE_TEXT});const {data}=await w.recognize(Buffer.from(image.split(',')[1],'base64'),{},{blocks:true});const lines=[];
  for(const block of data.blocks||[])for(const paragraph of block.paragraphs||[])for(const line of paragraph.lines||[]){const glyphs=[];for(const word of line.words||[])for(const symbol of word.symbols||[]){const b=symbol.bbox;glyphs.push({character:symbol.text,x:b.x0,y:b.y0,width:b.x1-b.x0,height:b.y1-b.y0});}lines.push({text:line.text.trim(),confidence:line.confidence/100,glyphs,pixels:true,bbox:line.bbox});}
