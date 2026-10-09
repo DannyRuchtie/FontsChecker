@@ -1,0 +1,76 @@
+{
+  "source": "https://rsms.me/inter/",
+  "version": "4.1",
+  "fonts": [
+    {
+      "file": "InterVariable.woff2",
+      "sha256": "693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3",
+      "axes": {
+        "opsz": [
+          14.0,
+          14.0,
+          32.0
+        ],
+        "wght": [
+          100.0,
+          400.0,
+          900.0
+        ]
+      }
+    },
+    {
+      "file": "InterVariable-Italic.woff2",
+      "sha256": "e564f652916db6c139570fefb9524a77c4d48f30c92928de9db19b6b5c7a262a",
+      "axes": {
+        "opsz": [
+          14.0,
+          14.0,
+          32.0
+        ],
+        "wght": [
+          100.0,
+          400.0,
+          900.0
+        ]
+      }
+    }
+  ],
+  "atlases": [
+    {
+      "file": "upright-14.png",
+      "weights": [
+        100,
+        900
+      ],
+      "opticalSize": 14,
+      "italic": false
+    },
+    {
+      "file": "upright-32.png",
+      "weights": [
+        100,
+        900
+      ],
+      "opticalSize": 32,
+      "italic": false
+    },
+    {
+      "file": "italic-14.png",
+      "weights": [
+        100,
+        900
+      ],
+      "opticalSize": 14,
+      "italic": true
+    },
+    {
+      "file": "italic-32.png",
+      "weights": [
+        100,
+        900
+      ],
+      "opticalSize": 32,
+      "italic": true
+    }
+  ]
+}

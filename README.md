@@ -21,13 +21,25 @@ Font matches are visual estimates. Similar fonts can be hard to distinguish, and
 
 ### Where does the font comparison come from?
 
-This prototype does not download Google Fonts, load font files, render reference specimens, or search a font database. The shortlist is a set of names in the interface; custom names are not checked against the Google Fonts catalog. The API receives names and instructions, not reference glyph images.
+For **Inter**, requests now include four reference images rendered from Rasmus Andersson’s official [Inter 4.1 files](https://rsms.me/inter/). They cover weights 100–900 in upright and italic at optical sizes 14 and 32. The target image comes first; the prompt explicitly separates it from reference specimens so the presence of Inter in a reference must not count as a target match. Original font files, the SIL Open Font License, source URLs, and SHA-256 hashes are included under `references/inter/`.
 
-The working assumption is that the model can associate font names with visual patterns learned during training. We ask it to judge distinctive letterforms and allow different weights, while ignoring font names printed inside the uploaded image. That instruction does not guarantee it will ignore a label or distinguish close lookalikes.
+This is reference-assisted recognition, not model training. The model receives the specimens on each relevant request; it does not permanently learn from them. Intermediate variable weights, every OpenType alternate, older Inter versions, and every language are not exhaustively represented. Extra reference images also add input tokens.
 
-OpenAI’s [Decisions documentation](https://developers.openai.com/api/docs/guides/decisions) describes image input and classification outputs, but does not specify a font reference dataset, a font recognition algorithm, or verified recognition accuracy. We cannot identify which training examples support a particular answer. The returned percentage is the model’s estimate, not a measured glyph similarity score or proof of identity.
+Other font families still rely on the model’s existing knowledge. The app does not fetch their font files or validate names against Google Fonts. OpenAI does not document which font training examples support an answer, and probabilities are model estimates rather than measured glyph similarity.
 
-For a comparison with an explicit source, a future version could obtain actual font files, render the same text in candidate fonts, and supply those specimens alongside the uploaded image. That would give the model concrete references, though accuracy would still need testing.
+### Measuring Inter detection
+
+`eval/` contains 36 synthetic Inter examples (nine weights × two styles × two optical sizes) plus eight negative examples rendered in Arial, Helvetica, Verdana, and Times New Roman. Evaluation text differs from the reference specimens and includes no font names. These are starter test cases, not evidence of production accuracy; add real screenshots, close lookalikes such as Roboto and SF Pro, blur, small text, mixed fonts, alternate glyphs, and misleading labels.
+
+Run a baseline-versus-reference comparison after configuring a key:
+
+```sh
+node --env-file-if-exists=.env scripts/evaluate-inter.mjs
+```
+
+This makes 88 API requests and reports positive, negative, inconclusive, and refused decisions separately. Results are saved locally under ignored `eval/results/`. The initial run did not establish reliable detection; use an independent held-out set before choosing thresholds or claiming reliability.
+
+To regenerate specimens and fixtures, install Pillow, fonttools, and brotli in a Python environment, then run `python scripts/render-inter.py`. Negative fixture regeneration currently uses macOS system fonts; their font files are not distributed. Reference assets use the included SIL Open Font License.
 
 ## Run locally
 
@@ -50,3 +62,17 @@ Open [localhost:3000](http://localhost:3000). The key stays on the server, and `
 No dependencies. Run `npm test` to check request validation and API payloads.
 
 Uses `POST /v1/decisions` with `gpt-6-luna`. See the [Decisions API documentation](https://developers.openai.com/api/docs/guides/decisions).
+
+### Initial evaluation (9 October 2026)
+
+At the provisional 80% / 20% thresholds:
+
+| Outcome | Names only | With Inter references |
+| --- | ---: | ---: |
+| Inter confidently identified (36 cases) | 0 | 0 |
+| Inter incorrectly rejected | 10 | 3 |
+| Non-Inter correctly rejected (8 cases) | 2 | 2 |
+| Non-Inter incorrectly accepted | 0 | 0 |
+| Inconclusive (all 44 cases) | 32 | 39 |
+
+References reduced confident false negatives in this small synthetic test, but did not produce confident positive identification. **This prototype is not yet a reliable Inter detector.** Results are from one run, with a limited negative set and shared test phrasing; they do not measure real-world accuracy or establish statistical improvement. Model behavior can vary between runs.

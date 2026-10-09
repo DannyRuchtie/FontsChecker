@@ -1,0 +1,346 @@
+[
+  {
+    "file": "inter-100-14-upright.jpg",
+    "expected": true,
+    "weight": 100,
+    "opticalSize": 14,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-200-14-upright.jpg",
+    "expected": true,
+    "weight": 200,
+    "opticalSize": 14,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-300-14-upright.jpg",
+    "expected": true,
+    "weight": 300,
+    "opticalSize": 14,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-400-14-upright.jpg",
+    "expected": true,
+    "weight": 400,
+    "opticalSize": 14,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-500-14-upright.jpg",
+    "expected": true,
+    "weight": 500,
+    "opticalSize": 14,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-600-14-upright.jpg",
+    "expected": true,
+    "weight": 600,
+    "opticalSize": 14,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-700-14-upright.jpg",
+    "expected": true,
+    "weight": 700,
+    "opticalSize": 14,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-800-14-upright.jpg",
+    "expected": true,
+    "weight": 800,
+    "opticalSize": 14,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-900-14-upright.jpg",
+    "expected": true,
+    "weight": 900,
+    "opticalSize": 14,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-100-32-upright.jpg",
+    "expected": true,
+    "weight": 100,
+    "opticalSize": 32,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-200-32-upright.jpg",
+    "expected": true,
+    "weight": 200,
+    "opticalSize": 32,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-300-32-upright.jpg",
+    "expected": true,
+    "weight": 300,
+    "opticalSize": 32,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-400-32-upright.jpg",
+    "expected": true,
+    "weight": 400,
+    "opticalSize": 32,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-500-32-upright.jpg",
+    "expected": true,
+    "weight": 500,
+    "opticalSize": 32,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-600-32-upright.jpg",
+    "expected": true,
+    "weight": 600,
+    "opticalSize": 32,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-700-32-upright.jpg",
+    "expected": true,
+    "weight": 700,
+    "opticalSize": 32,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-800-32-upright.jpg",
+    "expected": true,
+    "weight": 800,
+    "opticalSize": 32,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-900-32-upright.jpg",
+    "expected": true,
+    "weight": 900,
+    "opticalSize": 32,
+    "italic": false,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-100-14-italic.jpg",
+    "expected": true,
+    "weight": 100,
+    "opticalSize": 14,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-200-14-italic.jpg",
+    "expected": true,
+    "weight": 200,
+    "opticalSize": 14,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-300-14-italic.jpg",
+    "expected": true,
+    "weight": 300,
+    "opticalSize": 14,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-400-14-italic.jpg",
+    "expected": true,
+    "weight": 400,
+    "opticalSize": 14,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-500-14-italic.jpg",
+    "expected": true,
+    "weight": 500,
+    "opticalSize": 14,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-600-14-italic.jpg",
+    "expected": true,
+    "weight": 600,
+    "opticalSize": 14,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-700-14-italic.jpg",
+    "expected": true,
+    "weight": 700,
+    "opticalSize": 14,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-800-14-italic.jpg",
+    "expected": true,
+    "weight": 800,
+    "opticalSize": 14,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-900-14-italic.jpg",
+    "expected": true,
+    "weight": 900,
+    "opticalSize": 14,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-100-32-italic.jpg",
+    "expected": true,
+    "weight": 100,
+    "opticalSize": 32,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-200-32-italic.jpg",
+    "expected": true,
+    "weight": 200,
+    "opticalSize": 32,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-300-32-italic.jpg",
+    "expected": true,
+    "weight": 300,
+    "opticalSize": 32,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-400-32-italic.jpg",
+    "expected": true,
+    "weight": 400,
+    "opticalSize": 32,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-500-32-italic.jpg",
+    "expected": true,
+    "weight": 500,
+    "opticalSize": 32,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-600-32-italic.jpg",
+    "expected": true,
+    "weight": 600,
+    "opticalSize": 32,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-700-32-italic.jpg",
+    "expected": true,
+    "weight": 700,
+    "opticalSize": 32,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-800-32-italic.jpg",
+    "expected": true,
+    "weight": 800,
+    "opticalSize": 32,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "inter-900-32-italic.jpg",
+    "expected": true,
+    "weight": 900,
+    "opticalSize": 32,
+    "italic": true,
+    "kind": "synthetic"
+  },
+  {
+    "file": "negative-helvetica-29.jpg",
+    "expected": false,
+    "family": "Helvetica",
+    "size": 29,
+    "kind": "synthetic"
+  },
+  {
+    "file": "negative-helvetica-49.jpg",
+    "expected": false,
+    "family": "Helvetica",
+    "size": 49,
+    "kind": "synthetic"
+  },
+  {
+    "file": "negative-arial-29.jpg",
+    "expected": false,
+    "family": "Arial",
+    "size": 29,
+    "kind": "synthetic"
+  },
+  {
+    "file": "negative-arial-49.jpg",
+    "expected": false,
+    "family": "Arial",
+    "size": 49,
+    "kind": "synthetic"
+  },
+  {
+    "file": "negative-verdana-29.jpg",
+    "expected": false,
+    "family": "Verdana",
+    "size": 29,
+    "kind": "synthetic"
+  },
+  {
+    "file": "negative-verdana-49.jpg",
+    "expected": false,
+    "family": "Verdana",
+    "size": 49,
+    "kind": "synthetic"
+  },
+  {
+    "file": "negative-times-new-roman-29.jpg",
+    "expected": false,
+    "family": "Times New Roman",
+    "size": 29,
+    "kind": "synthetic"
+  },
+  {
+    "file": "negative-times-new-roman-49.jpg",
+    "expected": false,
+    "family": "Times New Roman",
+    "size": 49,
+    "kind": "synthetic"
+  }
+]

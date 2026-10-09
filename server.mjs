@@ -1,6 +1,7 @@
 import http from 'node:http';
 import {readFile} from 'node:fs/promises';
 import {buildDecision} from './decision.mjs';
+import {addInterReferences} from './inter-reference.mjs';
 const assets = {'/':['index.html','text/html'], '/app.js':['app.js','text/javascript'], '/style.css':['style.css','text/css']};
 function json(res,status,data){res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(data));}
 const server = http.createServer(async(req,res)=>{
@@ -12,12 +13,13 @@ const server = http.createServer(async(req,res)=>{
       for await(const chunk of req){body+=chunk;if(body.length>3_100_000) return json(res,413,{error:'Image request is too large.'});}
       let payload;try{payload=buildDecision(JSON.parse(body));}catch(e){return json(res,400,{error:e.message});}
       if(!process.env.OPENAI_API_KEY) return json(res,503,{error:'Add OPENAI_API_KEY to the server’s .env file, then restart npm start.'});
+      const {payload: groundedPayload, reference}=addInterReferences(payload);
       const started=Date.now();
-      const upstream=await fetch('https://api.openai.com/v1/decisions',{method:'POST',headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify(payload),signal:AbortSignal.timeout(60000)});
+      const upstream=await fetch('https://api.openai.com/v1/decisions',{method:'POST',headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify(groundedPayload),signal:AbortSignal.timeout(60000)});
       const data=await upstream.json();
       if(!upstream.ok) return json(res,upstream.status,{error:data.error?.message||'OpenAI could not complete this request.'});
       if(!Array.isArray(data.answers)||!data.answers.length) return json(res,502,{error:'OpenAI returned no decision.'});
-      return json(res,200,{...data,elapsedMs:Date.now()-started});
+      return json(res,200,{...data,elapsedMs:Date.now()-started,reference});
     }
     if(req.method==='GET' && assets[req.url]){const [file,type]=assets[req.url];res.writeHead(200,{'Content-Type':type});return res.end(await readFile(new URL(`./public/${file}`,import.meta.url)));}
     json(res,404,{error:'Not found'});
