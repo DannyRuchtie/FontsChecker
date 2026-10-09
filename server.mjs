@@ -1,3 +1,4 @@
+const cleanText=text=>typeof text==='string'?text.replace(/[\u0000-\u001f\u007f-\u009f\u200b\ufeff]/g,' ').replace(/\s+/g,' ').trim():text;
 import {measureFont} from './measurement.mjs';
 import http from 'node:http';
 import {profileSchema,selectReferences,shouldBroaden} from './reference-selection.mjs';
@@ -21,7 +22,8 @@ const server = http.createServer(async(req,res)=>{
       if(data.status!=='completed')return json(res,502,{error:'Text extraction was incomplete. Type the text manually or try again.'});
       const output=(data.output||[]).flatMap(item=>item.type==='message'?item.content||[]:[]).filter(part=>part.type==='output_text').map(part=>part.text).join(' ');
       let profile;try{profile=JSON.parse(output);}catch{return json(res,502,{error:'Could not read a typography profile. Enter text manually and retry.'});}
-      return json(res,200,{text:profile.text.trim().slice(0,120),profile,usage:data.usage,model:data.model});
+      profile.text=cleanText(profile.text).slice(0,120);
+      return json(res,200,{text:profile.text,profile,usage:data.usage,model:data.model});
     }
     if(req.method==='POST' && req.url==='/api/measure'){
       if(req.headers.origin && req.headers.origin!==`http://${req.headers.host}`)return json(res,403,{error:'Request origin is not allowed.'});
@@ -32,7 +34,7 @@ const server = http.createServer(async(req,res)=>{
       if(req.headers.origin && req.headers.origin!==`http://${req.headers.host}`) return json(res,403,{error:'Request origin is not allowed.'});
       let body='';
       for await(const chunk of req){body+=chunk;if(body.length>15_100_000) return json(res,413,{error:'Image request is too large.'});}
-      let payload,reference,request,selection;try{request=JSON.parse(body);selection=selectReferences(request.profile); const base=buildDecision(request); ({payload,reference}=await attachFontReferences(base,request.font||'Inter',request.text?.trim()||'',selection));}catch(e){return json(res,400,{error:e.message});}
+      let payload,reference,request,selection;try{request=JSON.parse(body);request.text=cleanText(request.text);selection=selectReferences(request.profile); const base=buildDecision(request); ({payload,reference}=await attachFontReferences(base,request.font||'Inter',request.text?.trim()||'',selection));}catch(e){return json(res,400,{error:e.message});}
       if(!process.env.OPENAI_API_KEY) return json(res,503,{error:'Add OPENAI_API_KEY to the server’s .env file, then restart npm start.'});
       const started=Date.now();
       const upstream=await fetch('https://api.openai.com/v1/decisions',{method:'POST',headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify(payload),signal:AbortSignal.timeout(60000)});

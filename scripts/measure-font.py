@@ -33,8 +33,10 @@ def score(a,b):
  return best,overlay
 
 def run(r):
- text=r.get('text','').strip();letters=''.join(text.split())
- if len(text)>120 or sum(c.isalnum() for c in letters)<3 or not all(c.isprintable() for c in letters):return {'status':'not_checked','reason':'Use one line up to 120 characters containing at least three letters or digits. Punctuation and font-supported Unicode characters are allowed.'}
+ text=' '.join(''.join(' ' if ord(c)<32 or 127<=ord(c)<=159 or c in '\u200b\ufeff' else c for c in r.get('text','')).split());letters=''.join(text.split())
+ if not text:return {'status':'not_checked','reason':'No readable comparison text. Type the words from your selected region and analyze again.'}
+ if sum(c.isalnum() for c in letters)<3:return {'status':'not_checked','reason':'Select a region with at least three letters or digits for a useful shape comparison.'}
+ if len(text)>120:return {'status':'not_checked','reason':'Comparison text exceeds 120 characters. Select a shorter line.'}
  im=Image.open(BytesIO(base64.b64decode(r['image'].split(',')[1]))).convert('L')
  if im.width*im.height>3000000:return {'status':'not_checked','reason':'Crop is too large.'}
  # Clean backgrounds only: choose the minority of a high-contrast binary split.

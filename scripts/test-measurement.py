@@ -22,6 +22,10 @@ class MeasurementTests(unittest.TestCase):
  def test_punctuation_and_unicode(self):
   for text in ['Hamburg!', 'Café']:
    result=run(self.fixture(text=text));self.assertEqual(result['status'],'measured',result);self.assertGreater(result['best']['shapeSimilarity'],90)
+ def test_ocr_control_artifact_is_removed(self):
+  r=self.fixture();r['text']='Hamburg\x7f';result=run(r);self.assertEqual(result['status'],'measured');self.assertEqual(result['text'],'Hamburg')
+ def test_empty_text_has_actionable_message(self):
+  r=self.fixture();r['text']='\x7f';result=run(r);self.assertEqual(result['status'],'not_checked');self.assertIn('Type the words',result['reason'])
  def test_wrong_transcription_is_not_checked(self):
   r=self.fixture();r['text']='Hello!';self.assertEqual(run(r)['status'],'not_checked')
 if __name__=='__main__':unittest.main()

@@ -141,6 +141,8 @@ Candidate words are scaled uniformly to the target line height. Each letter is a
 
 Spacing is measured separately as the mean absolute difference between consecutive letter left-edge distances after uniform scaling, in crop pixels. This includes tracking and word spaces; it is not a pure kerning score. Leading is not measured. Independent shape alignment intentionally removes spacing differences from the shape score.
 
+Invisible OCR control characters are removed before comparison and reference rendering; whitespace is normalized. Empty transcriptions ask for manual text rather than reporting a generic character restriction.
+
 The initial implementation supports one clean line up to 120 characters, including punctuation and font-supported Unicode, with at least three letters/digits, with a minimum line height of 16 px. Touching or disconnected characters, segmentation count mismatches, unsupported glyphs, and low contrast return **not checked**. Projection segmentation does not prove correct OCR correspondence; textures, multiline crops, outlines, shadows, ligatures, and perspective can invalidate a measurement. The existing model estimate remains separate. The edge tolerance can make neighboring weights score almost equally; candidate ranking does not establish exact weight identity. Similar fonts can still score highly, and this layer has not been evaluated for real-world font identification accuracy.
 
 Run its synthetic shape/spacing checks with `.renderer/bin/python scripts/test-measurement.py`. These verify preserved shape scores under added tracking and punctuation/accented text support and rejection of mismatched transcriptions, rather than establishing identification accuracy.
