@@ -34,7 +34,7 @@ def score(a,b):
 
 def run(r):
  text=r.get('text','').strip();letters=''.join(text.split())
- if len(letters)<3 or len(letters)>40 or not all(c.isascii() and c.isalnum() for c in letters):return {'status':'not_checked','reason':'Local measurement currently needs one short line of 3–40 ASCII letters or digits (no punctuation).'}
+ if len(text)>120 or sum(c.isalnum() for c in letters)<3 or not all(c.isprintable() for c in letters):return {'status':'not_checked','reason':'Use one line up to 120 characters containing at least three letters or digits. Punctuation and font-supported Unicode characters are allowed.'}
  im=Image.open(BytesIO(base64.b64decode(r['image'].split(',')[1]))).convert('L')
  if im.width*im.height>3000000:return {'status':'not_checked','reason':'Crop is too large.'}
  # Clean backgrounds only: choose the minority of a high-contrast binary split.
@@ -45,7 +45,7 @@ def run(r):
  bbox=mask.getbbox()
  if not bbox:return {'status':'not_checked','reason':'No text pixels found.'}
  mask=mask.crop(bbox);runs=segments(mask)
- if len(runs)!=len(letters):return {'status':'not_checked','reason':f'Could not separate the {len(letters)} transcribed letters reliably ({len(runs)} pixel groups). Try a clean, tightly cropped word.'}
+ if len(runs)!=len(letters):return {'status':'not_checked','reason':f'Could not separate the {len(letters)} transcribed characters reliably ({len(runs)} pixel groups). Try a clean, tightly cropped word.'}
  if mask.height<16:return {'status':'not_checked','reason':'Letters are too small to measure (minimum 16 px line height).'}
  target=[mask.crop((a,0,b,mask.height)).crop(mask.crop((a,0,b,mask.height)).getbbox()) for a,b in runs]
  root=Path(r['directory']);cache=root/'measurement-fonts';cache.mkdir(exist_ok=True);results=[]
@@ -71,7 +71,7 @@ def run(r):
      b=ref.crop((left,0,right,ref.height));b=b.crop(b.getbbox());value,pair=score(a,b);scores.append(value);overlays.append(pair)
     spacing=sum(abs((runs[i][0]-runs[i-1][0])-(rr[i][0]-rr[i-1][0])) for i in range(1,len(runs)))/max(1,len(runs)-1)
     results.append({'weight':weight,'italic':bool(f['head'].macStyle&2) or 'italic' in path.name.lower(),'opticalSize':op,'shapeSimilarity':round(100*sum(scores)/len(scores),1),'minimumLetterSimilarity':round(100*min(scores),1),'spacingMeanDifferencePx':round(spacing,2),'letters':[{'letter':c,'similarity':round(v*100,1)} for c,v in zip(letters,scores)],'_overlays':overlays})
- if not results:return {'status':'not_checked','reason':'Candidate letters could not be separated reliably.'}
+ if not results:return {'status':'not_checked','reason':'Candidate characters could not be separated reliably, or the font lacks the transcribed glyphs.'}
  results.sort(key=lambda v:v['shapeSimilarity'],reverse=True);best=results[0];pairs=best['_overlays'];width=sum(a.width+8 for a,b in pairs);height=max(a.height for a,b in pairs);canvas=Image.new('RGB',(width,height),'white');x=0
  for a,b in pairs:
   tile=Image.new('RGB',a.size,'white');both=ImageChops.multiply(a,b);tile.paste('#2871ed',(0,0),a);tile.paste('#f47925',(0,0),b);tile.paste('#252b27',(0,0),both);canvas.paste(tile,(x,0));x+=a.width+8
