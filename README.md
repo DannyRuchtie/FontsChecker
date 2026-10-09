@@ -175,3 +175,5 @@ Run its synthetic shape/spacing checks with `.renderer/bin/python scripts/test-m
 Automatic OCR selects one physical line, including when the supplied transcription spans several lines. Local measurement separates horizontal ink bands and uses a uniquely matching line when possible; ambiguous or clipped regions ask for a manual complete-line selection. Manual selections are cropped exactly without automatic padding. Contrast families lacking the requested glyphs are omitted rather than blocking target-font rendering.
 
 Segmentation tries both light-on-dark and dark-on-light masks and removes exterior background components connected to crop borders, including mixed-polarity text panels. It reports a result only when one candidate line has the expected character count; this remains a heuristic rather than character-level OCR.
+
+Drawing a manual region with an empty text field now runs OCR on that region. If OCR returns no text, analysis stops before local measurement and the Decisions call, asks for transcription, and focuses the text field. This avoids spending classification tokens on a check that cannot produce a local overlay.
