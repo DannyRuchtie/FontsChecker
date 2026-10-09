@@ -26,10 +26,11 @@ flowchart TD
     G[Drop image] --> H[Resize locally and encode JPEG]
     H --> I[Click Analyze]
     I --> J{Comparison text supplied?}
-    J -->|No| K[Responses API reads a visible line with OCR]
+    J -->|No| K[Responses API reads text and estimates weight, style, size]
     J -->|Yes| L[Use editable transcription]
     K --> L
-    L --> M[Render the same words from actual target font files]
+    L --> T[Select nearby weights and styles when estimates are confident]
+    T --> M[Render the same words from actual target font files]
     D --> M
     F --> N[Choose generic or matching-text sheets, up to six]
     M --> N
@@ -38,7 +39,10 @@ flowchart TD
     R[Render known different fonts using the same words] --> O
     O --> S[Compare target and contrast letterforms]
     O --> P[Estimate font match and readable text sufficiency]
-    P --> Q[Show likely, unlikely or inconclusive plus reference previews]
+    P --> U{Narrowed result inconclusive and readable?}
+    U -->|Yes| V[Retry once with broader cached references]
+    V --> Q[Show result, all token usage and reference previews]
+    U -->|No| Q
 ```
 
 ## Run locally
@@ -69,6 +73,14 @@ The server generates all supported samples and sends at most six target-font she
 The first image is always the **target**. Following images are explicitly marked **reference only**. The prompt asks the model to compare shared letterforms and ignore font names printed in the target. That instruction reduces label reliance but does not guarantee the model will ignore labels or distinguish close lookalikes.
 
 Text extraction uses `gpt-4.1-mini` via the Responses API (`store: false`). Classification uses `gpt-6-luna` via `POST /v1/decisions`. OCR and classification are separately billed; token usage is shown separately. An OCR failure leaves manual transcription available. If no readable text is extracted, the checker can use generic diagnostic specimens.
+
+## Adaptive reference selection
+
+The same Responses request that reads text also estimates a broad weight class, upright/italic style, apparent size, and certainty. High-certainty estimates select neighboring weights (not a single weight), the likely style, and two nearby text sizes for small or display text. Medium certainty uses wider weight ranges and keeps both styles; low certainty retains full coverage. Optical-size samples remain broad because raster text size does not establish the font’s optical-size axis. Manual transcriptions are preserved while the image is profiled.
+
+Filtered packs are cached by font, text, and selection. New filtered packs instantiate only the selected variants. Unavailable weight/style combinations fall back to full coverage. If a narrowed comparison returns 20–80% match probability with sufficient readable text, the server retries once with broader references. Both attempts and their total Decisions input tokens are reported. A failed broad retry leaves the first result visible with a notice. No retry runs for unreadable targets, already-broad comparisons, or confident results; confident mistakes remain possible.
+
+This reduces reference volume when the profile is useful, but automatic retries can cost more than one full comparison. A live regular-upright Inter check sent six target variants in three reference images (including contrasts), using 3,967 input tokens versus 16,772 for the broad pass. It was inconclusive and retried, so total Decisions input was 20,739 tokens. This is one example, not a benchmark. Accuracy improvement has not been established; the evaluation below predates adaptive selection.
 
 ## Confidence and limitations
 
@@ -105,7 +117,7 @@ See [OpenAI Decisions](https://developers.openai.com/api/docs/guides/decisions),
 
 ## Prebuilt packs and caching
 
-`references/packs/` contains font files, licenses, provenance, and generic reference sheets for Inter, Roboto, and Open Sans. A fresh checkout seeds its local cache from these committed packs. Generic generation therefore does not run again for these families. Adding another selected font downloads and renders it once. Matching-text packs are cached by family and transcription; changing the words creates a new pack, while repeated words reuse the existing one. The first new transcription can take tens of seconds to render. Font files are pinned to the cached or committed version; upstream updates do not silently replace them.
+`references/packs/` contains font files, licenses, provenance, and generic reference sheets for Inter, Roboto, and Open Sans. A fresh checkout seeds its local cache from these committed packs. Generic generation therefore does not run again for these families. Adding another selected font downloads and renders it once. Matching-text packs are cached by family, transcription, and reference selection; changing the words creates a new pack, while repeated words reuse the existing one. The first new transcription can take tens of seconds to render. Font files are pinned to the cached or committed version; upstream updates do not silently replace them.
 
 To prepare and commit another generic family pack:
 
