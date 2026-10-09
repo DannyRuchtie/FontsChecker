@@ -177,3 +177,5 @@ Automatic OCR selects one physical line, including when the supplied transcripti
 Segmentation tries both light-on-dark and dark-on-light masks and removes exterior background components connected to crop borders, including mixed-polarity text panels. It reports a result only when one candidate line has the expected character count; this remains a heuristic rather than character-level OCR.
 
 Drawing a manual region with an empty text field now runs OCR on that region. If OCR returns no text, analysis stops before local measurement and the Decisions call, asks for transcription, and focuses the text field. This avoids spending classification tokens on a check that cannot produce a local overlay.
+
+Each new manual region clears the previous transcription and result. Analyze then reads that crop automatically unless you enter its exact text first, preventing a previous region’s words from being reused.
