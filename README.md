@@ -194,7 +194,7 @@ If local segmentation fails, the browser makes one additional OCR request on the
 
 An isolated trailing pixel group wider than 1.3 times the line height can be excluded when OCR transcribes one fewer character (for example, a separate arrow icon). This is a heuristic and can misclassify an unusually wide glyph; similarity is not calibrated identity confidence. Background removal starts at crop corners rather than every edge pixel, avoiding removal of ordinary letters near the edges.
 
-The font-match result uses a large confidence percentage: green only for estimates at least 80% supported by a strong local comparison, orange for intermediate estimates or insufficient readable text, and red for estimates at most 20%. These display thresholds are provisional; the percentage is the AI model estimate, not a measured success rate. Local shape similarity remains a separately labeled score and does not trigger the green font-confidence state.
+The font-match result uses a large confidence percentage: green for AI estimates at least 80%, orange for intermediate estimates or insufficient readable text, and red for estimates at most 20%. These display thresholds are provisional; the percentage is the AI model estimate, not a measured success rate. Local shape similarity remains a separately labeled score and does not trigger the green font-confidence state.
 
 ## OCR positions, comparison margins, and benchmark
 
@@ -215,3 +215,15 @@ Local measurements do not use the OpenAI weight estimate to exclude candidate va
 ### Analysis feedback
 
 The verdict appears directly below the image and controls, above the local letter-shape measurements. A compact spinner shows the current stage while OCR, measurement, and the separate AI estimate run. Local results appear as soon as they are ready; the verdict expands smoothly when the AI result arrives, moving the measurements down. Reduced-motion preferences disable the expansion animation. Failed requests and local-only runs replace the spinner with an explicit status.
+
+### Interpreting intermediate AI estimates
+
+An estimate such as 78% is shown as “AI leans toward Inter”, rather than a binary failure at an arbitrary 80% boundary. Color thresholds are display conventions, not validated certainty boundaries. AI estimates and local contrast measurements are reported independently. Local ambiguity does not reduce the returned AI percentage. Manual selections and transcriptions are preserved if local measurement fails. Automatic OCR favors prominent lines over long rows of small labels, but it can still misread characters; check the comparison text. Clean-line pixel segmentation is tried before OCR symbol boxes, which can overlap or clip glyphs.
+
+The visual verdict waits for a fresh OpenAI request even when reference images are cached. An inconclusive narrowed comparison may require a second request with broader references. Reference caching avoids rendering work; it does not eliminate upload or model latency.
+
+### Faster visual verdict
+
+After text selection, local measurement and the AI comparison start concurrently. The UI displays elapsed time while waiting for OpenAI. The normal UI makes one Decisions request; automatic broad-reference retries are disabled. The backend only permits the existing broad retry when `retryBroad: true` is explicitly requested. Reference caching does not cache AI verdicts. This changes latency and reporting, not the model’s returned probability. The earlier local benchmark describes the OCR-first implementation; it has not been rerun for the pixel-first fallback change.
+
+Identical-image OCR results are reused in a bounded, process-memory cache (12 images, including concurrent requests); no uploaded pixels are written to disk by this cache. Restarting clears it. The two local comparison-font measurements run concurrently, and a failed comparison is reported as incomplete. Reference coverage is unchanged. These changes remove duplicate work; actual speed depends on CPU resources and OpenAI response time.
