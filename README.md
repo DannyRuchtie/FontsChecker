@@ -1,20 +1,35 @@
 # Fonts Checker
 
-A local image-drop prototype using OpenAI’s Decisions API (`POST /v1/decisions`, `gpt-6-luna`). No dependencies; Node 22+.
+Drop an image to find a likely font match or check a font you have in mind. A small prototype powered by OpenAI’s Decisions API.
 
-## Run
+![Fonts Checker checking a type specimen against Roboto](docs/fonts-checker.png)
 
-Copy `.env.example` to `.env`, set `OPENAI_API_KEY`, then run `npm start`. Open http://localhost:3000. The key stays on the server; never paste it into the browser or commit it.
+## What it does
 
-- **Find a match:** classify predominant readable text against an editable shortlist of common Google Fonts, with an unknown option. This is not a search of the entire Google Fonts catalog. Custom entries are not validated for catalog membership.
-- **Check a font:** estimate whether any readable text uses a named family.
-- JPEG/PNG/WebP up to 20 MB. Resize locally to 768, 1024 (default), or 1600 px on the longest edge, encode as JPEG, and send only when Analyze is clicked. JPEG byte reduction does not itself guarantee proportional token savings; dimensions and image processing matter.
-- Returns probabilities, elapsed time, actual API input tokens, and raw response. Images are not stored by this application. OpenAI data handling applies to uploaded images.
+- **Find a match:** compare text against an editable shortlist of Google Fonts, with an “unknown” option.
+- **Check a font:** estimate whether readable text uses a specific font family.
+- Resize images locally before upload, then show probabilities, response time, and token usage.
 
-A raster image cannot establish font provenance or licensing. Lookalikes, small text, weight differences, and mixed typography limit accuracy. Thresholds of 80% / 20% are provisional UI heuristics, not calibrated accuracy. Evaluate labeled examples before relying on results. Decisions supports fixed choices and predicates, not arbitrary font-name generation; open-ended identification would require a separate Responses API step.
+Font matches are visual estimates. Similar fonts can be hard to distinguish, and an image cannot establish font origin or licensing. Shortlist mode does not search the entire Google Fonts catalog.
 
-Docs: https://developers.openai.com/api/docs/guides/decisions
+## Run locally
 
-## Check
+Requires Node.js 22+ and an OpenAI API key with access to the Decisions API.
 
-`npm test` exercises request validation and the API payload. A real API call requires a configured key and account access to Decisions. Server binds to localhost and is intended for a local prototype, not a public deployment.
+```sh
+cp .env.example .env
+```
+
+Add your key as `OPENAI_API_KEY` in `.env`, then start:
+
+```sh
+npm start
+```
+
+Open [localhost:3000](http://localhost:3000). The key stays on the server, and `.env` is excluded from Git. Images are sent to OpenAI only when you click **Analyze image**; the app does not save uploaded images.
+
+## Development
+
+No dependencies. Run `npm test` to check request validation and API payloads.
+
+Uses `POST /v1/decisions` with `gpt-6-luna`. See the [Decisions API documentation](https://developers.openai.com/api/docs/guides/decisions).
