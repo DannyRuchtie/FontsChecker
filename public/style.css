@@ -17,3 +17,5 @@ img{-webkit-user-drag:none;user-select:none}
 .measurement-status{font-size:26px;font-weight:800;color:#986414}
 
 #measurement.measurement-supported{border:2px solid #23834b;background:#f2fbf5}.measurement-supported .measurement-status{color:#16703c}.measurement-other .measurement-status{color:#ae3029}
+
+#result.verdict-pending{padding:20px 28px}.verdict-pending .eyebrow{margin:0 0 10px}.pending-row{display:flex;align-items:center;gap:12px}.pending-message{margin:0;font-size:14px}.loading-spinner{flex:none;width:20px;height:20px;border:2px solid #dce5d4;border-top-color:#638442;border-radius:50%;animation:loading-spin .8s linear infinite}@keyframes loading-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.loading-spinner{animation:none;border-top-color:#638442}}
