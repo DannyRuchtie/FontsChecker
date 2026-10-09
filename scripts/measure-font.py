@@ -42,12 +42,35 @@ def run(r):
  # Clean backgrounds only: choose the minority of a high-contrast binary split.
  lo,hi=im.getextrema()
  if hi-lo<60:return {'status':'not_checked','reason':'Insufficient text/background contrast.'}
- mask=im.point(lambda v:255 if v<(lo+hi)/2 else 0)
- if sum(mask.histogram()[128:])>im.width*im.height/2:mask=ImageOps.invert(mask)
- bbox=mask.getbbox()
- if not bbox:return {'status':'not_checked','reason':'No text pixels found.'}
- mask=mask.crop(bbox);runs=segments(mask)
- if len(runs)!=len(letters):return {'status':'not_checked','reason':f'Could not separate the {len(letters)} transcribed characters reliably ({len(runs)} pixel groups). Try a clean, tightly cropped word.'}
+ initial=im.point(lambda v:255 if v<(lo+hi)/2 else 0)
+ options=[]
+ for polarity in [initial,ImageOps.invert(initial)]:
+  mask=polarity.copy()
+  # Remove exterior background components while retaining text inside panels.
+  for x in range(mask.width):
+   for y in [0,mask.height-1]:
+    if mask.getpixel((x,y)):ImageDraw.floodfill(mask,(x,y),0)
+  for y in range(mask.height):
+   for x in [0,mask.width-1]:
+    if mask.getpixel((x,y)):ImageDraw.floodfill(mask,(x,y),0)
+  bbox=mask.getbbox()
+  if not bbox:continue
+  mask=mask.crop(bbox)
+  bands=segments(mask.transpose(Image.Transpose.TRANSPOSE));merged=[]
+  for top,bottom in bands:
+   if merged and top-merged[-1][1]<=max(3,(bottom-top)*.3):merged[-1]=(merged[-1][0],bottom)
+   else:merged.append((top,bottom))
+  candidates=[mask] if len(merged)==1 else []
+  for top,bottom in merged:
+   line=mask.crop((0,top,mask.width,bottom));bb=line.getbbox()
+   if bb:candidates.append(line.crop(bb))
+  for line in candidates:
+   runs=segments(line)
+   if len(runs)==len(letters) and line.height>=16:
+    if not any(line.size==v.size and line.tobytes()==v.tobytes() for v in options):options.append(line)
+ if len(options)!=1:return {'status':'not_checked','reason':'Could not isolate one complete line matching the transcription. The box may clip letters, include other lines, or contain touching glyphs. Drag around the complete text line and enter exactly that line.'}
+ mask=options[0];runs=segments(mask)
+ if len(runs)!=len(letters):return {'status':'not_checked','reason':f'Could not separate the {len(letters)} transcribed characters reliably ({len(runs)} pixel groups). The crop may clip letters, include neighboring text, or contain touching glyphs. Drag around one complete line and make its transcription match exactly.'}
  if mask.height<16:return {'status':'not_checked','reason':'Letters are too small to measure (minimum 16 px line height).'}
  target=[mask.crop((a,0,b,mask.height)).crop(mask.crop((a,0,b,mask.height)).getbbox()) for a,b in runs]
  root=Path(r['directory']);cache=root/'measurement-fonts';cache.mkdir(exist_ok=True);results=[]

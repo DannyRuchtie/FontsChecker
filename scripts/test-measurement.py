@@ -1,7 +1,7 @@
 import unittest,sys,base64
 from pathlib import Path
 from io import BytesIO
-from PIL import Image,ImageDraw,ImageFont
+from PIL import Image,ImageDraw,ImageFont,ImageOps
 sys.path.insert(0,str(Path(__file__).parent))
 import importlib.util
 spec=importlib.util.spec_from_file_location('measure',Path(__file__).with_name('measure-font.py'));module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);run=module.run
@@ -26,6 +26,8 @@ class MeasurementTests(unittest.TestCase):
   r=self.fixture();r['text']='Hamburg\x7f';result=run(r);self.assertEqual(result['status'],'measured');self.assertEqual(result['text'],'Hamburg')
  def test_empty_text_has_actionable_message(self):
   r=self.fixture();r['text']='\x7f';result=run(r);self.assertEqual(result['status'],'not_checked');self.assertIn('Type the words',result['reason'])
+ def test_white_text_inside_black_panel(self):
+  r=self.fixture();im=Image.open(BytesIO(base64.b64decode(r['image'].split(',')[1]))).convert('RGB');im=ImageOps.invert(im);canvas=Image.new('RGB',(640,140),'white');canvas.paste(im,(20,20));buf=BytesIO();canvas.save(buf,format='PNG');r['image']='data:image/png;base64,'+base64.b64encode(buf.getvalue()).decode();result=run(r);self.assertEqual(result['status'],'measured',result)
  def test_wrong_transcription_is_not_checked(self):
   r=self.fixture();r['text']='Hello!';self.assertEqual(run(r)['status'],'not_checked')
 if __name__=='__main__':unittest.main()

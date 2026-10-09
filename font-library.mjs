@@ -45,7 +45,7 @@ export async function attachFontReferences(payload,font,text='',selection=null){
  parts.push({type:'input_text',text:'REFERENCE ONLY. Variant labels and font source metadata: '+JSON.stringify(atlases.map(x=>x.variants))},...await Promise.all(atlases.map(async x=>({type:'input_image',image_url:'data:image/jpeg;base64,'+(await readFile(resolve(prepared.directory,x.file))).toString('base64')}))));
  const contrasts=[];
  for(const name of ['Inter','Roboto','Open Sans'].filter(name=>fontId(name)!==prepared.id).slice(0,2)){
-  const other=await prepareFont(name);let otherPack=text||selection?await render(other.directory,text,selection):other.pack;
+  const other=await prepareFont(name);let otherPack;try{otherPack=text||selection?await render(other.directory,text,selection):other.pack;}catch(e){if(e.message.includes('does not support'))continue;throw e;}
   if(!otherPack.variantCount)otherPack=text?await render(other.directory,text):other.pack;
   const sheet=otherPack.atlases.find(x=>x.variants.some(v=>!v.italic&&v.weight===400))||otherPack.atlases[0];
   parts.push({type:'input_text',text:`CONTRAST REFERENCE ONLY: ${other.family}, a different font. Compare shared target glyphs against these too. This is not target evidence.`},{type:'input_image',image_url:'data:image/jpeg;base64,'+(await readFile(resolve(other.directory,sheet.file))).toString('base64')});
