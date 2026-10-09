@@ -8,7 +8,7 @@ Drop an image, choose a font, and compare its letterforms against references gen
 
 - Downloads a selected Google Fonts family, preserving its license and recording source URLs and file hashes. Inter uses the bundled official Inter 4.1 files from [Rasmus Andersson](https://rsms.me/inter/).
 - Generates clean reference sheets across available standard weights, upright/italic styles, sampled optical sizes, and **18, 32, and 52 px** text sizes.
-- Reads a line from your image automatically, then renders the same text in the selected font for comparison. You can correct the transcription and analyze again.
+- Reads and locates a line from your image automatically, highlights its approximate region, then renders the same text in the selected font for comparison. You can correct the transcription and analyze again.
 - Includes comparison specimens from two other families (chosen from Inter, Roboto, and Open Sans) to challenge lookalike matches.
 - Shows the estimated probability of a font match, a separate text-readability estimate, actual API token usage, and the reference images used.
 - Caches font files and generated specimens locally so repeated checks reuse them. Committed diagnostic packs for Inter, Roboto, and Open Sans make initial preparation immediate on a fresh checkout.
@@ -26,15 +26,17 @@ flowchart TD
     G[Drop image] --> H[Resize locally and encode JPEG]
     H --> I[Click Analyze]
     I --> J{Comparison text supplied?}
-    J -->|No| K[Responses API reads text and estimates weight, style, size]
-    J -->|Yes| L[Use editable transcription]
+    J -->|No| K[Responses API reads and locates text; estimates weight, style, size]
+    J -->|Yes| K
+    K --> L[Use editable transcription]
     K --> L
     L --> T[Select nearby weights and styles when estimates are confident]
     T --> M[Render the same words from actual target font files]
     D --> M
     F --> N[Choose generic or matching-text sheets, up to six]
     M --> N
-    H --> O[Decisions API]
+    L --> W[Locate and highlight text; crop locally with padding]
+    W --> O[Decisions API]
     N --> O
     R[Render known different fonts using the same words] --> O
     O --> S[Compare target and contrast letterforms]
@@ -70,7 +72,7 @@ Font files come from the official [Google Fonts repository](https://github.com/g
 
 The server generates all supported samples and sends at most six target-font sheets spanning the pack, plus two contrast sheets from different families, to keep requests bounded. Contrast sources are Inter, Roboto, and Open Sans, excluding the selected family. Each row includes multiple text sizes. The result reports whether all reference sheets were reused from cache. Long transcriptions are fitted by using a prefix at each size; missing glyphs cause an explicit error instead of rendering fallback characters. Font source details and exactly which variants were sent are included in the request and returned with the result.
 
-The first image is always the **target**. Following images are explicitly marked **reference only**. The prompt asks the model to compare shared letterforms and ignore font names printed in the target. That instruction reduces label reliance but does not guarantee the model will ignore labels or distinguish close lookalikes.
+The preview box marks the padded text crop sent as the **target**. Automatic localization is approximate; check that the box includes the intended line. Drag over the preview to select a different region and enter its transcription; manual selections use broad references until a typography profile is available. When no valid region is returned, the full image is used and the result explicitly says so. Editing the transcription clears the box and triggers fresh localization on the next analysis. The first image is always the **target**. Following images are explicitly marked **reference only**. The prompt asks the model to compare shared letterforms and ignore font names printed in the target. That instruction reduces label reliance but does not guarantee the model will ignore labels or distinguish close lookalikes.
 
 Text extraction uses `gpt-4.1-mini` via the Responses API (`store: false`). Classification uses `gpt-6-luna` via `POST /v1/decisions`. OCR and classification are separately billed; token usage is shown separately. An OCR failure leaves manual transcription available. If no readable text is extracted, the checker can use generic diagnostic specimens.
 
