@@ -8,3 +8,5 @@ eval/results/
 
 .cache/
 .renderer/
+
+__pycache__/

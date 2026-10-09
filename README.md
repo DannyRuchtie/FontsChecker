@@ -10,6 +10,7 @@ Drop an image, choose a font, and compare its letterforms against references gen
 - Generates clean reference sheets across available standard weights, upright/italic styles, sampled optical sizes, and **18, 32, and 52 px** text sizes.
 - Reads and locates a line from your image automatically, highlights its approximate region, then renders the same text in the selected font for comparison. You can correct the transcription and analyze again.
 - Includes comparison specimens from two other families (chosen from Inter, Roboto, and Open Sans) to challenge lookalike matches.
+- Measures clean single-line letter shapes locally against actual font variants, with colored pixel overlays and a separate spacing difference.
 - Shows the estimated probability of a font match, a separate text-readability estimate, actual API token usage, and the reference images used.
 - Caches font files and generated specimens locally so repeated checks reuse them. Committed diagnostic packs for Inter, Roboto, and Open Sans make initial preparation immediate on a fresh checkout.
 
@@ -36,6 +37,8 @@ flowchart TD
     F --> N[Choose generic or matching-text sheets, up to six]
     M --> N
     L --> W[Locate and highlight text; crop locally with padding]
+    W --> X[Segment letters and locally align actual font renders]
+    X --> Y[Shape similarity, spacing difference and colored overlay]
     W --> O[Decisions API]
     N --> O
     R[Render known different fonts using the same words] --> O
@@ -129,3 +132,15 @@ git add references/packs/montserrat
 ```
 
 The exporter copies only generic diagnostic references, fonts, licenses, and source metadata. It never exports cached user transcriptions. These remain under ignored `.cache/fonts/`. Regenerate packs deliberately when updating font files or the renderer.
+
+## Local overlay measurement
+
+Before the model comparison, `/api/measure` runs Pillow and FontTools locally. It isolates foreground pixels on a clean contrasting background, splits letters using vertical pixel projections, and renders the transcription from each available sampled font variant. Instantiated fonts are cached locally by font-file content and axis coordinates; uploaded image pixels and overlays are not written to disk.
+
+Candidate words are scaled uniformly to the target line height. Each letter is aligned independently without stretching its proportions. The score counts foreground pixels with a counterpart within a 1 px edge tolerance, permitting ±2 px translation. The UI shows the best mean shape similarity, lowest letter similarity, five candidate variants, and colored overlays: dark shared pixels, blue original-only pixels, orange reference-only pixels. These are measurement scores, not probabilities of font identity; no pass threshold has been calibrated.
+
+Spacing is measured separately as the mean absolute difference between consecutive letter left-edge distances after uniform scaling, in crop pixels. This includes tracking and word spaces; it is not a pure kerning score. Leading is not measured. Independent shape alignment intentionally removes spacing differences from the shape score.
+
+The initial implementation supports 3–40 non-space ASCII letters/digits on one clean line, with a minimum line height of 16 px. Punctuation, touching letters, segmentation count mismatches, unsupported glyphs, and low contrast return **not checked**. Projection segmentation does not prove correct OCR correspondence; textures, multiline crops, outlines, shadows, ligatures, and perspective can invalidate a measurement. The existing model estimate remains separate. The edge tolerance can make neighboring weights score almost equally; candidate ranking does not establish exact weight identity. Similar fonts can still score highly, and this layer has not been evaluated for real-world font identification accuracy.
+
+Run its synthetic shape/spacing checks with `.renderer/bin/python scripts/test-measurement.py`. These verify preserved shape scores under added tracking and explicit rejection of unsupported punctuation, rather than establishing identification accuracy.

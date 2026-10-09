@@ -1,0 +1,24 @@
+import unittest,sys,base64
+from pathlib import Path
+from io import BytesIO
+from PIL import Image,ImageDraw,ImageFont
+sys.path.insert(0,str(Path(__file__).parent))
+import importlib.util
+spec=importlib.util.spec_from_file_location('measure',Path(__file__).with_name('measure-font.py'));module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);run=module.run
+
+class MeasurementTests(unittest.TestCase):
+ def fixture(self,tracking=0):
+  root=Path('.cache/fonts/inter')
+  # Use an authoritative default Inter instance rather than whichever cache file is first.
+  from fontTools.ttLib import TTFont
+  from fontTools.varLib.instancer import instantiateVariableFont
+  f=TTFont(root/'InterVariable.woff2');f=instantiateVariableFont(f,{'wght':400,'opsz':14},inplace=False);f.flavor=None;buf=BytesIO();f.save(buf)
+  font=ImageFont.truetype(BytesIO(buf.getvalue()),48);im=Image.new('RGB',(600,100),'white');d=ImageDraw.Draw(im);x=10
+  for c in 'Hamburg':
+   d.text((x,10),c,font=font,fill='black');x+=font.getlength(c)+tracking
+  output=BytesIO();im.save(output,format='PNG');return {'directory':str(root),'image':'data:image/png;base64,'+base64.b64encode(output.getvalue()).decode(),'text':'Hamburg'}
+ def test_matching_shapes_and_tracking(self):
+  a=run(self.fixture());b=run(self.fixture(8));self.assertEqual(a['status'],'measured');self.assertEqual(b['status'],'measured');self.assertGreater(a['best']['shapeSimilarity'],90);self.assertGreater(b['best']['shapeSimilarity'],90);self.assertGreater(b['best']['spacingMeanDifferencePx'],a['best']['spacingMeanDifferencePx']+4)
+ def test_punctuation_is_not_checked(self):
+  r=self.fixture();r['text']='Hello!';self.assertEqual(run(r)['status'],'not_checked')
+if __name__=='__main__':unittest.main()

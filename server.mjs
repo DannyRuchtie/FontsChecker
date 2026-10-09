@@ -1,3 +1,4 @@
+import {measureFont} from './measurement.mjs';
 import http from 'node:http';
 import {profileSchema,selectReferences,shouldBroaden} from './reference-selection.mjs';
 import {readFile} from 'node:fs/promises';
@@ -21,6 +22,11 @@ const server = http.createServer(async(req,res)=>{
       const output=(data.output||[]).flatMap(item=>item.type==='message'?item.content||[]:[]).filter(part=>part.type==='output_text').map(part=>part.text).join(' ');
       let profile;try{profile=JSON.parse(output);}catch{return json(res,502,{error:'Could not read a typography profile. Enter text manually and retry.'});}
       return json(res,200,{text:profile.text.trim().slice(0,120),profile,usage:data.usage,model:data.model});
+    }
+    if(req.method==='POST' && req.url==='/api/measure'){
+      if(req.headers.origin && req.headers.origin!==`http://${req.headers.host}`)return json(res,403,{error:'Request origin is not allowed.'});
+      let body='';for await(const chunk of req){body+=chunk;if(body.length>3100000)return json(res,413,{error:'Image too large.'});}
+      try{return json(res,200,await measureFont(JSON.parse(body)));}catch(e){return json(res,400,{error:e.message});}
     }
     if(req.method==='POST' && req.url==='/api/analyze') {
       if(req.headers.origin && req.headers.origin!==`http://${req.headers.host}`) return json(res,403,{error:'Request origin is not allowed.'});
