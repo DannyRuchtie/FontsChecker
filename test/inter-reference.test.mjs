@@ -3,5 +3,5 @@ import assert from 'node:assert/strict';
 import {buildDecision} from '../decision.mjs';
 import {addInterReferences} from '../inter-reference.mjs';
 const image='data:image/png;base64,aGVsbG8=';
-test('Inter target remains first and references are explicitly separate',()=>{const {payload,reference}=addInterReferences(buildDecision({image,mode:'verify',font:' inter '}));const parts=payload.input[0].content;assert.equal(reference.images,4);assert.equal(parts[1].image_url,image);assert.equal(parts.filter(x=>x.type==='input_image').length,5);assert.match(parts[0].text,/Judge only text in the TARGET/);});
-test('shortlist Inter gets references while unrelated fonts do not',()=>{assert.ok(addInterReferences(buildDecision({image,mode:'identify',candidates:['Inter','Roboto']})).reference);assert.equal(addInterReferences(buildDecision({image,mode:'verify',font:'Roboto'})).reference,null);});
+test('target remains first with four official references',()=>{const {payload,reference}=addInterReferences(buildDecision({image,font:' inter '}));assert.equal(reference.images,4);assert.equal(payload.input[0].content[1].image_url,image);assert.match(payload.input[0].content[0].text,/Judge only text in the TARGET/);});
+test('matching text adds four references; other fonts have no Inter references',()=>{assert.equal(addInterReferences(buildDecision({image}),Array(4).fill(image)).reference.images,8);assert.equal(addInterReferences(buildDecision({image,font:'Roboto'})).reference,null);assert.throws(()=>addInterReferences(buildDecision({image}),[image]));});

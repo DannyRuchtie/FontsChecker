@@ -1,29 +1,29 @@
 # Fonts Checker
 
-Drop an image to find a likely font match or check a font you have in mind. A small prototype powered by OpenAI’s Decisions API.
+Drop an image and check whether its text uses a font you choose. A small prototype powered by OpenAI’s Decisions API.
 
-![Fonts Checker checking a type specimen against Roboto](docs/fonts-checker.png)
+![Fonts Checker comparing an Inter numeral specimen with official references](docs/fonts-checker.png)
 
 ## What it does
 
-- **Find a match:** compare text against an editable shortlist of Google Fonts, with an “unknown” option.
-- **Check a font:** estimate whether readable text uses a specific font family.
+- **Target font:** choose Inter or enter another font family to estimate whether readable text uses it.
+- **Inter reference pack:** every Inter check includes official specimens; automatically read a line with the Responses API and add specimens rendered with the same words. You can edit that text.
 - Resize images locally before upload, then show probabilities, response time, and token usage.
 
-Font matches are visual estimates. Similar fonts can be hard to distinguish, and an image cannot establish font origin or licensing. Shortlist mode does not search the entire Google Fonts catalog.
+Font matches are visual estimates. Similar fonts can be hard to distinguish, and an image cannot establish font origin or licensing. The app does not search the entire Google Fonts catalog.
 
 ## How it works
 
 1. The browser decodes your image, scales it to the selected maximum edge length (1,024 px by default), and encodes it as JPEG. This reduces dimensions before the API request; it does not extract text or identify fonts locally.
 2. When you click **Analyze image**, the local server sends the resized image as an inline base64 data URL, plus a question, to OpenAI’s Decisions API.
-3. In **Find a match**, the question supplies your font names as fixed choices, plus “unknown.” In **Check a font**, it asks whether readable text uses the named family and receives an estimated probability.
+3. The question asks whether readable target text uses your chosen family and receives an estimated probability. Inter always includes its reference pack. For Inter, a blank transcription triggers automatic text extraction with `gpt-4.1-mini` via the Responses API (`store: false`). The extracted text is editable; OCR can make mistakes. A transcription adds four locally rendered matching-text atlases, spanning 36 Inter variants; these are also sent to OpenAI.
 4. The interface displays that result, request time, and token usage. Specific-font checks use provisional thresholds: 80% or more is “likely,” 20% or less is “unlikely,” and the middle is “inconclusive.” These thresholds have not been calibrated against a labeled dataset.
 
 ### Where does the font comparison come from?
 
 For **Inter**, requests now include four reference images rendered from Rasmus Andersson’s official [Inter 4.1 files](https://rsms.me/inter/). They cover weights 100–900 in upright and italic at optical sizes 14 and 32. The target image comes first; the prompt explicitly separates it from reference specimens so the presence of Inter in a reference must not count as a target match. Original font files, the SIL Open Font License, source URLs, and SHA-256 hashes are included under `references/inter/`.
 
-This is reference-assisted recognition, not model training. The model receives the specimens on each relevant request; it does not permanently learn from them. Intermediate variable weights, every OpenType alternate, older Inter versions, and every language are not exhaustively represented. Extra reference images also add input tokens.
+Reference packs are selected by target family in `inter-reference.mjs`; add a licensed pack and renderer for another family to give it the same foundation. Fonts without a pack are explicitly marked in the interface. This is reference-assisted recognition, not model training. The model receives the specimens on each relevant request; it does not permanently learn from them. Intermediate variable weights, every OpenType alternate, older Inter versions, and every language are not exhaustively represented. Extra reference images also add input tokens. The standard pack covers a diagnostic Latin subset; matching-text rendering is limited by glyph coverage and scales long lines to fit. Every possible OpenType setting is not covered.
 
 Other font families still rely on the model’s existing knowledge. The app does not fetch their font files or validate names against Google Fonts. OpenAI does not document which font training examples support an answer, and probabilities are model estimates rather than measured glyph similarity.
 
@@ -76,3 +76,5 @@ At the provisional 80% / 20% thresholds:
 | Inconclusive (all 44 cases) | 32 | 39 |
 
 References reduced confident false negatives in this small synthetic test, but did not produce confident positive identification. **This prototype is not yet a reliable Inter detector.** Results are from one run, with a limited negative set and shared test phrasing; they do not measure real-world accuracy or establish statistical improvement. Model behavior can vary between runs.
+
+Automatic text extraction adds a separately billed Responses request; its input and output token usage is shown separately from the Decisions request. A text-reading failure leaves manual entry available. Other fonts do not run automatic extraction until a matching-text reference renderer is available.

@@ -46,3 +46,14 @@ for path in [Path('/System/Library/Fonts/Helvetica.ttc'),Path('/System/Library/F
 (root/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
 Path('eval/manifest.json').write_text(json.dumps(examples,indent=2)+'\n')
 print(f'Generated {len(manifest["atlases"])} reference atlases and {len(examples)} evaluation cases.')
+
+# Browser reference fonts: keep variable weight, pin optical size.
+fontroot=Path('public/fonts');fontroot.mkdir(parents=True,exist_ok=True)
+css=[]
+for style in ('upright','italic'):
+    for opsz in (14,32):
+        f=TTFont(root/('InterVariable'+('-Italic' if style=='italic' else '')+'.woff2'))
+        f=instantiateVariableFont(f,{'opsz':opsz},inplace=True)
+        f.save(fontroot/f'{style}-{opsz}.woff2')
+        css.append(f'@font-face{{font-family:InterRef-{style}-{opsz};src:url(/fonts/{style}-{opsz}.woff2);font-weight:100 900;font-style:normal;font-display:block;}}')
+Path('public/inter-fonts.css').write_text('\n'.join(css))
