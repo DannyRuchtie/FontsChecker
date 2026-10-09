@@ -15,7 +15,7 @@ async function prepare(file){
   const ctx=canvas.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();
   const data=canvas.toDataURL('image/jpeg',.88);if(data.length>3_000_000)throw Error('Image is still too large. Choose a smaller image size.');
   if(version!==generation)return;
-  $('preview-frame').style.setProperty('--ratio',canvas.width/canvas.height);source=file;prepared=data;$('sample-text').value='';ocrUsage=null;typographyProfile=null;$('preview').src=data;$('preview-frame').hidden=false;$('text-region').hidden=true;$('placeholder').hidden=true;$('clear').hidden=false;
+  $('preview-frame').style.setProperty('--ratio',canvas.width/canvas.height);source=file;prepared=data;$('sample-text').value='';ocrUsage=null;typographyProfile=null;$('preview').src=data;$('preview-frame').hidden=false;$('selection-hint').hidden=false;$('text-region').hidden=true;$('placeholder').hidden=true;$('clear').hidden=false;
   $('image-info').textContent=`${canvas.width} × ${canvas.height} · ${fmt(file.size)} → ${fmt(Math.round((data.length-data.indexOf(',')-1)*.75))}`;status('Ready. Only the resized image will be sent.');
  }catch(e){if(version===generation)status(e.message);}finally{update();}
 }
@@ -23,7 +23,7 @@ $('file').onchange=e=>{if(e.target.files[0])prepare(e.target.files[0]);};
 $('drop').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('file').click();}};
 for(const event of ['dragenter','dragover'])$('drop').addEventListener(event,e=>{e.preventDefault();$('drop').classList.add('over');});
 for(const event of ['dragleave','drop'])$('drop').addEventListener(event,e=>{e.preventDefault();$('drop').classList.remove('over');if(event==='drop'&&e.dataTransfer.files[0]&&!busy)prepare(e.dataTransfer.files[0]);});
-$('clear').onclick=()=>{generation++;source=prepared=null;$('preview').removeAttribute('src');$('preview-frame').hidden=true;$('text-region').hidden=true;$('placeholder').hidden=false;$('clear').hidden=true;$('file').value='';$('image-info').textContent='Your image stays here until you click Analyze.';$('result').hidden=true;$('measurement').hidden=true;status('');update();};
+$('clear').onclick=()=>{generation++;source=prepared=null;$('preview').removeAttribute('src');$('preview-frame').hidden=true;$('selection-hint').hidden=true;$('text-region').hidden=true;$('placeholder').hidden=false;$('clear').hidden=true;$('file').value='';$('image-info').textContent='Your image stays here until you click Analyze.';$('result').hidden=true;$('measurement').hidden=true;status('');update();};
 $('size').onchange=()=>{if(source)prepare(source);};
 let fontTimer, fontVersion=0;
 async function prepareTarget(){const version=++fontVersion;const name=$('font').value.trim();if(!name)return;$('reference-info').textContent='Downloading font and generating reference pack…';try{const r=await fetch('/api/font?name='+encodeURIComponent(name));const data=await r.json();if(!r.ok)throw Error(data.error);if(version!==fontVersion)return;$('reference-info').textContent=`${data.family}: ${data.pack.variantCount} variants · 18 / 32 / 52 px · cached and ready.`;}catch(e){if(version===fontVersion)$('reference-info').textContent=e.message;}}

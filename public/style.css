@@ -3,3 +3,5 @@
 #preview-frame{position:relative;width:min(100%,calc(var(--ratio,1) * 420px));line-height:0}#preview{display:block;width:100%;height:auto;max-height:none}#text-region{position:absolute;border:2px solid #638442;box-shadow:0 0 0 3px #63844225;pointer-events:none}
 
 #measurement{background:white;border:1px solid #dce0d7;border-radius:16px;margin-top:24px;padding:28px}pre{white-space:pre-wrap;overflow-wrap:anywhere}
+
+#preview-frame,#preview{cursor:crosshair;touch-action:none;user-select:none}#selection-hint{font-size:12px;color:#516b3a;margin:12px 0 0;line-height:1.5}
